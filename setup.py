@@ -34,9 +34,7 @@ setup(
     license="MIT",
     keywords=["GOCD", "CI", "CD"],
     install_requires=read_req("requirements.txt"),
-    extras_require={
-        "dev": read_req("requirements-dev.txt"),
-    },
+    extras_require={"dev": read_req("requirements-dev.txt")},
     entry_points={"console_scripts": ["gocd-tools = gocd.cli.cli:run"]},
     classifiers=[
         "Intended Audience :: Developers",
