@@ -23,7 +23,7 @@ def load(path, mode="r", readlines=False):
 
 def remove(path):
     try:
-        if os.path.exists(path):
+        if exists(path):
             os.remove(path)
             return True, "Removed file: {}".format(path)
     except Exception as err:
