@@ -35,7 +35,7 @@ setup(
     keywords=["GOCD", "CI", "CD"],
     install_requires=read_req("requirements.txt"),
     extras_require={"dev": read_req("requirements-dev.txt")},
-    entry_points={"console_scripts": ["gocd-tools = gocd.cli.cli:run"]},
+    entry_points={"console_scripts": ["gocd-tools = gocd_tools.cli.cli:run"]},
     classifiers=[
         "Intended Audience :: Developers",
         "Intended Audience :: System Administrators",

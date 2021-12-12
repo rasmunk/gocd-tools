@@ -11,14 +11,12 @@ def to_str(o):
         return o.__str__()
 
 
-
 def run():
     parser = argparse.ArgumentParser(prog=PACKAGE_NAME)
     commands = parser.add_subparsers(title="COMMAND")
 
     setup_parser = commands.add_parser("setup")
     setup_cli(setup_parser)
-
 
     args = parser.parse_args()
     # Execute default function
