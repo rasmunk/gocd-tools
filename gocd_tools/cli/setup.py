@@ -15,8 +15,8 @@ def setup_cli(parser):
 
     secrets_generate_parser.set_defaults(
         func=cli_exec,
-        module_path="gocd_tools.cli.setup",
-        module_name="setup",
+        module_path="gocd_tools.secrets",
+        module_name="secrets",
         func_name="init_secrets",
     )
 
@@ -28,7 +28,7 @@ def setup_cli(parser):
 
     setup_generate_parser.set_defaults(
         func=cli_exec,
-        module_path="gocd_tools.cli.setup",
-        module_name="setup",
+        module_path="gocd_tools.server",
+        module_name="server",
         func_name="init_server",
     )

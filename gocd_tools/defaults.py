@@ -37,22 +37,31 @@ GO_SECRET_DB_FILE = "{}/secrets.yml".format(GO_SECRET_DIR)
 # Other constants
 GOCD_SECRET_PLUGIN = "gocd-file-based-secrets-plugin.jar"
 
+# Environment variables
+ENV_GO_PLUGINS_BUNDLED_DIR = "GO_PLUGINS_BUNDLED_DIR"
+ENV_GO_SECRET_DIR = "GO_SECRET_DIR"
+ENV_GO_SECRET_DB_FILE = "GO_SECRET_DB_FILE"
+
 
 # TODO, if these ENV vars are not set, use the defaults
 def get_secrets_dir_path():
-    dir_path, msg = is_env_set(GO_SECRET_DIR)
-
-    if not dir_path:
-
+    env_dir_path, msg = is_env_set(ENV_GO_SECRET_DIR)
+    if not env_dir_path:
+        # Use the default as a backup
+        if GO_SECRET_DIR:
+            return GO_SECRET_DIR, ""
         return False, msg
-    return True, ""
+    return env_dir_path, ""
 
 
 def get_secrets_file_name():
-    secrets_name, msg = is_env_set(GO_SECRET_DB_FILE)
+    secrets_name, msg = is_env_set(ENV_GO_SECRET_DB_FILE)
     if not secrets_name:
+        # Use the default as a backup
+        if GO_SECRET_DB_FILE:
+            return GO_SECRET_DB_FILE, ""
         return False, msg
-    return True, ""
+    return secrets_name, ""
 
 
 def get_secrets_db_path():
@@ -62,3 +71,4 @@ def get_secrets_db_path():
     file_name, msg = get_secrets_file_name()
     if not file_name:
         return False, msg
+    return os.path.join(dir_path, file_name)
