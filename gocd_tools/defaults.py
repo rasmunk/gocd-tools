@@ -19,7 +19,7 @@ ACCEPT_HEADER_4 = {"Accept": API_VERSION_4, **JSON_HEADER}
 
 GO_DATA_DIR = "/godata"
 GO_SECRET_DIR = "/gosecrets"
-GO_SECRET_DB_FILE = "{}/secrets.yml".format(GO_SECRET_DIR)
+GO_SECRET_DB_FILE = "secrets.yml"
 GO_CONFIG_DIR = os.path.join(os.path.expanduser("~"), ".{}".format(PACKAGE_NAME))
 GO_PLUGIN_DIR = os.path.join(GO_DATA_DIR, "plugins")
 
@@ -87,4 +87,4 @@ def get_secrets_db_path():
     file_name, msg = get_secrets_file_name()
     if not file_name:
         return False, msg
-    return os.path.join(dir_path, file_name)
+    return os.path.join(dir_path, file_name), ""

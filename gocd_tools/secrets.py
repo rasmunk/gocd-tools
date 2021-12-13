@@ -49,7 +49,7 @@ def configure_secrets():
     """ This function is required to be run on the target
     server because it is using the file secret plugin """
     response = {}
-    secret_db_path = get_secrets_db_path()
+    secret_db_path, msg = get_secrets_db_path()
     secret_db = load_config(path=secret_db_path)
     if not secret_db:
         response["msg"] = "The secret db at: {} could not be loaded".format(
