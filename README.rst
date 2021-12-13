@@ -1,2 +1,5 @@
-# gocd-tools
-A tool for managing the GO CD server
+==========
+gocd-tools
+==========
+
+A tool for automating the configuration of a GOCD server
