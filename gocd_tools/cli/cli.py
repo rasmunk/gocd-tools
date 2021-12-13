@@ -14,7 +14,6 @@ def to_str(o):
 def run():
     parser = argparse.ArgumentParser(prog=PACKAGE_NAME)
     commands = parser.add_subparsers(title="COMMAND")
-
     setup_parser = commands.add_parser("setup")
     setup_cli(setup_parser)
 

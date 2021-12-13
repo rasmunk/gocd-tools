@@ -32,14 +32,15 @@ def remove(path):
 
 
 def exists(path):
-    return os.path.exists(path)
+    return os.path.exists(os.path.expanduser(path))
 
 
 def chmod(path, mode, **kwargs):
     try:
         os.chmod(path, mode, **kwargs)
     except Exception as err:
-        return False, "Failed to set permissions: {} on: {} - {}".format(
-            mode, path, err
+        return (
+            False,
+            "Failed to set permissions: {} on: {} - {}".format(mode, path, err),
         )
     return True, "Set the path: {} with permissions: {}".format(path, mode)

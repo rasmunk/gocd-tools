@@ -1,20 +1,7 @@
 import os
 from gocd_tools.utils import is_env_set
 
-
-PACKAGE_NAME = "gocd-utils"
-
-default_base_path = os.path.join(os.path.expanduser("~"), ".{}".format(PACKAGE_NAME))
-default_config_path = os.path.join(default_base_path, "config")
-
-cluster_profiles_path = os.path.join(default_config_path, "cluster_profiles.yml")
-elastic_agent_profile_path = os.path.join(
-    default_config_path, "elastic_agent_profiles.yml"
-)
-repositories_path = os.path.join(default_config_path, "repositories.yml")
-authorization_config_path = os.path.join(default_config_path, "authorization.yml")
-secret_managers_config_path = os.path.join(default_config_path, "secret_managers.yml")
-
+PACKAGE_NAME = "gocd-tools"
 
 # API Request Defaults
 CONTENT_TYPE = "application/json"
@@ -30,20 +17,46 @@ ACCEPT_HEADER_2 = {"Accept": API_VERSION_2, **JSON_HEADER}
 ACCEPT_HEADER_3 = {"Accept": API_VERSION_3, **JSON_HEADER}
 ACCEPT_HEADER_4 = {"Accept": API_VERSION_4, **JSON_HEADER}
 
-GO_PLUGINS_BUNDLED_DIR = "/godata"
+GO_DATA_DIR = "/godata"
 GO_SECRET_DIR = "/gosecrets"
 GO_SECRET_DB_FILE = "{}/secrets.yml".format(GO_SECRET_DIR)
+GO_CONFIG_DIR = os.path.join(os.path.expanduser("~"), ".{}".format(PACKAGE_NAME))
+
 
 # Other constants
 GOCD_SECRET_PLUGIN = "gocd-file-based-secrets-plugin.jar"
 
 # Environment variables
-ENV_GO_PLUGINS_BUNDLED_DIR = "GO_PLUGINS_BUNDLED_DIR"
+ENV_GO_DATA_DIR = "GO_DATA_DIR"
 ENV_GO_SECRET_DIR = "GO_SECRET_DIR"
 ENV_GO_SECRET_DB_FILE = "GO_SECRET_DB_FILE"
 
+ENV_GO_CONFIG_DIR = "GO_CONFIG_DIR"
 
-# TODO, if these ENV vars are not set, use the defaults
+# Default configuration input paths
+default_base_path = GO_CONFIG_DIR
+default_config_path = os.path.join(default_base_path, "config")
+
+cluster_profiles_path = os.path.join(default_config_path, "cluster_profiles.yml")
+elastic_agent_profile_path = os.path.join(
+    default_config_path, "elastic_agent_profiles.yml"
+)
+repositories_path = os.path.join(default_config_path, "repositories.yml")
+authorization_config_path = os.path.join(default_config_path, "authorization.yml")
+secret_managers_config_path = os.path.join(default_config_path, "secret_managers.yml")
+
+
+# Datadir discover
+def get_data_dir():
+    data_path, msg = is_env_set(ENV_GO_DATA_DIR)
+    if not data_path:
+        if GO_DATA_DIR:
+            return GO_DATA_DIR, ""
+        return False, msg
+    return data_path, ""
+
+
+# Secrets discover
 def get_secrets_dir_path():
     env_dir_path, msg = is_env_set(ENV_GO_SECRET_DIR)
     if not env_dir_path:
