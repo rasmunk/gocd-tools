@@ -3,7 +3,7 @@ import os
 
 def makedirs(path):
     try:
-        os.makedirs(path)
+        os.makedirs(os.path.expanduser(path))
         return True, "Created: {}".format(path)
     except Exception as err:
         return False, "Failed to create the directory path: {} - {}".format(path, err)
