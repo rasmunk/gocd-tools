@@ -28,7 +28,6 @@ def init_secrets_dir():
 
 def del_secrets_dir():
     response = {}
-
     db_path, msg = get_secrets_dir_path()
     if not db_path:
         response["msg"] = msg
