@@ -21,17 +21,20 @@ GO_DATA_DIR = "/godata"
 GO_SECRET_DIR = "/gosecrets"
 GO_SECRET_DB_FILE = "{}/secrets.yml".format(GO_SECRET_DIR)
 GO_CONFIG_DIR = os.path.join(os.path.expanduser("~"), ".{}".format(PACKAGE_NAME))
-
+GO_PLUGIN_DIR = os.path.join(GO_DATA_DIR, "plugins")
 
 # Other constants
 GOCD_SECRET_PLUGIN = "gocd-file-based-secrets-plugin.jar"
+
+BUNDLED_PLUGIN = "bundled"
+EXTERNAL_PLUGIN = "external"
 
 # Environment variables
 ENV_GO_DATA_DIR = "GO_DATA_DIR"
 ENV_GO_SECRET_DIR = "GO_SECRET_DIR"
 ENV_GO_SECRET_DB_FILE = "GO_SECRET_DB_FILE"
-
 ENV_GO_CONFIG_DIR = "GO_CONFIG_DIR"
+ENV_GO_PLUGIN_DIR = "GO_PLUGIN_DIR"
 
 # Default configuration input paths
 default_base_path = GO_CONFIG_DIR

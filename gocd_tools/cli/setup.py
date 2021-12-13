@@ -11,13 +11,28 @@ def setup_cli(parser):
     secrets_parser = setup_commands.add_parser(SECRETS)
     add_secrets_groups(secrets_parser)
     secrets_commands = secrets_parser.add_subparsers(title="COMMAND")
-    secrets_generate_parser = secrets_commands.add_parser("init")
-
-    secrets_generate_parser.set_defaults(
+    secrets_init_parser = secrets_commands.add_parser("init")
+    secrets_init_parser.set_defaults(
         func=cli_exec,
         module_path="gocd_tools.secrets",
         module_name="secrets",
-        func_name="init_secrets",
+        func_name="init_secrets_dir",
+    )
+
+    secrets_configure_parser = secrets_commands.add_parser("configure")
+    secrets_configure_parser.set_defaults(
+        func=cli_exec,
+        module_path="gocd_tools.secrets",
+        module_name="secrets",
+        func_name="configure_secrets",
+    )
+
+    secrets_del_parser = secrets_commands.add_parser("del")
+    secrets_del_parser.set_defaults(
+        func=cli_exec,
+        module_path="gocd_tools.secrets",
+        module_name="secrets",
+        func_name="del_secrets_dir",
     )
 
     # Server

@@ -24,11 +24,21 @@ def load(path, mode="r", readlines=False):
 def remove(path):
     try:
         if exists(path):
-            os.remove(path)
+            os.remove(os.path.expanduser(path))
             return True, "Removed file: {}".format(path)
     except Exception as err:
         return False, "Failed to remove file: {} - {}".format(path, err)
     return False, "Failed to remove file: {}".format(path)
+
+
+def removedir(path):
+    try:
+        if exists(path):
+            os.rmdir(os.path.expanduser(path))
+            return True, "Removed directory: {}".format(path)
+    except Exception as err:
+        return False, "Failed to remove directory: {} - {}".format(path, err)
+    return False, "Failed to remove directory: {}".format(path)
 
 
 def exists(path):
@@ -37,7 +47,7 @@ def exists(path):
 
 def chmod(path, mode, **kwargs):
     try:
-        os.chmod(path, mode, **kwargs)
+        os.chmod(os.path.expanduser(path), mode, **kwargs)
     except Exception as err:
         return (
             False,
