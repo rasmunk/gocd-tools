@@ -91,7 +91,7 @@ def configure_secrets():
             result = process(execute_kwargs=execute_kwargs)
             print("Result: {}".format(result))
 
-    response["msg"] = "The secrets db at: {} was used to configure the server"
+    response["msg"] = "The secrets db at: {} was used to configure the server".format(secret_db_path)
     return True, response
 
 

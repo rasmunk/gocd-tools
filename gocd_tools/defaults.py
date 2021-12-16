@@ -17,6 +17,41 @@ ACCEPT_HEADER_2 = {"Accept": API_VERSION_2, **JSON_HEADER}
 ACCEPT_HEADER_3 = {"Accept": API_VERSION_3, **JSON_HEADER}
 ACCEPT_HEADER_4 = {"Accept": API_VERSION_4, **JSON_HEADER}
 
+# API default endpoints
+if "BASE_URL" in os.environ:
+    BASE_URL = os.environ["BASE_URL"]
+else:
+    BASE_URL = ""
+
+# Public URLs
+GO_URL = "{}/go".format(BASE_URL)
+API_URL = "{}/api".format(GO_URL)
+
+AUTH_URL = "{}/current_user".format(API_URL)
+ELASTIC_AGENT_URL = "{}/elastic/profiles".format(API_URL)
+ADMIN_URL = "{}/admin".format(API_URL)
+SECURITY_URL = "{}/security".format(ADMIN_URL)
+
+# Restricted URLs
+AUTHORIZATION_CONFIG_URL = "{}/auth_configs".format(SECURITY_URL)
+CLUSTER_PROFILES_URL = "{}/elastic/cluster_profiles".format(ADMIN_URL)
+CONFIG_REPO_URL = "{}/config_repos".format(ADMIN_URL)
+SECRET_CONFIG_URL = "{}/secret_configs".format(ADMIN_URL)
+
+if "AUTH_TOKEN" in os.environ:
+    AUTH_TOKEN = os.environ["AUTH_TOKEN"]
+else:
+    AUTH_TOKEN = ""
+    # The AUTH_TOKEN is the one generate within the GOCD server
+    # (Not GitHub)
+
+AUTHORIZATION_HEADER = {
+    "Authorization": "bearer {}".format(AUTH_TOKEN),
+    **ACCEPT_HEADER_1,
+}
+
+
+# Server defaults
 GO_DATA_DIR = "/godata"
 GO_SECRET_DIR = "/gosecret"
 GO_SECRET_DB_FILE = "secrets.yml"
