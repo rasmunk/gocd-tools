@@ -123,8 +123,8 @@ if __name__ == "__main__":
         print(msg)
         exit(1)
 
-    configure_secrets, msg = configure_secrets()
-    if not configure_secrets:
+    configured_secrets, msg = configure_secrets()
+    if not configured_secrets:
         print(msg)
         exit(1)
 
