@@ -28,7 +28,6 @@ def process(execute_kwargs=None):
     if not execute_kwargs:
         execute_kwargs = {}
 
-    print("Execute Kwargs: {}".format(execute_kwargs))
     commands = execute_kwargs["commands"]
     if not isinstance(commands, list):
         commands = [execute_kwargs["commands"]]
