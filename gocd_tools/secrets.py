@@ -91,6 +91,11 @@ def configure_secrets():
                     else:
                         response["msg"] = json_result
                         return False, response
+                print(
+                    "Created secret db: {} by running: {} with output: {}".format(
+                        secret_db_path, new_db_cmd, json_result["output"]
+                    )
+                )
 
         # Assign the 'data' key in the secret_db to the secret file
         db_add_cmd = base_add_secret_cmd + [secret_db["path"]]
@@ -111,6 +116,12 @@ def configure_secrets():
                     else:
                         response["msg"] = json_result
                         return False, response
+
+                print(
+                    "Assigned key: {} to secret db: {}, with output: {}".format(
+                        key, secret_db["path"], json_result["output"]
+                    )
+                )
 
     response["msg"] = "The secrets db at: {} was used to configure the server".format(
         secret_db_path
