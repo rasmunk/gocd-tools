@@ -2,7 +2,7 @@ from gocd_tools.defaults import get_secrets_dir_path, get_secrets_db_path
 from gocd_tools.config import load_config
 from gocd_tools.plugin import get_plugin_path
 from gocd_tools.io import exists, makedirs, removedir
-from gocd_tools.utils import process
+from gocd_tools.utils import process, format_output_json
 
 
 def init_secrets_dir():
@@ -69,9 +69,7 @@ def configure_secrets():
 
     # Initialize the secret DBs at the server
     base_plugin_cmd = ["java", "-jar", file_secret_plugin_path]
-    print("Base plugin cmd: {}".format(base_plugin_cmd))
     create_db_cmd = base_plugin_cmd + ["init", "-f"]
-    print("Create_db_cmd: {}".format(create_db_cmd))
 
     # Add the secret key and values to the secret dbs
     base_add_secret_cmd = base_plugin_cmd + ["add", "-f"]
@@ -80,18 +78,42 @@ def configure_secrets():
         if not exists(secret_db["path"]):
             new_db_cmd = create_db_cmd + [secret_db["path"]]
             execute_kwargs = {"commands": [new_db_cmd], "capture": True}
-            result = process(execute_kwargs=execute_kwargs)
-            print("Result: {}".format(result))
+            results = process(execute_kwargs=execute_kwargs)
+            for result in results:
+                json_result = format_output_json(result)
+                if (
+                    "status" in json_result["error"]
+                    and json_result["error"]["status"] == "failed"
+                ):
+                    if "msg" in json_result["error"]:
+                        response["msg"] = json_result["error"]["msg"]
+                        return False, response
+                    else:
+                        response["msg"] = json_result
+                        return False, response
 
         # Assign the 'data' key in the secret_db to the secret file
         db_add_cmd = base_add_secret_cmd + [secret_db["path"]]
         for key, value in secret_db["data"].items():
             add_secret_cmd = db_add_cmd + ["-n", key, "-v", value]
             execute_kwargs = {"commands": [add_secret_cmd], "capture": True}
-            result = process(execute_kwargs=execute_kwargs)
-            print("Result: {}".format(result))
+            results = process(execute_kwargs=execute_kwargs)
+            for result in results:
+                json_result = format_output_json(result)
+                if (
+                    "status" in json_result["error"]
+                    and json_result["error"]["status"] == "failed"
+                ):
+                    if "msg" in json_result["error"]:
+                        response["msg"] = json_result["error"]["msg"]
+                        return False, response
+                    else:
+                        response["msg"] = json_result
+                        return False, response
 
-    response["msg"] = "The secrets db at: {} was used to configure the server"
+    response["msg"] = "The secrets db at: {} was used to configure the server".format(
+        secret_db_path
+    )
     return True, response
 
 

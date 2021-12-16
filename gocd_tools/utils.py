@@ -3,6 +3,8 @@ import datetime
 import sys
 import subprocess
 import inspect
+import json
+from ast import literal_eval
 
 
 def get_env_value(name):
@@ -64,6 +66,29 @@ def process(execute_kwargs=None):
             command_results.update({"output": str(getattr(result, "stdout"))})
         output_results.append(command_results)
     return output_results
+
+
+def format_output_json(process_result):
+    json_result = {}
+    for key, value in process_result.items():
+        try:
+            evalued = literal_eval(value)
+        except SyntaxError:
+            json_result[key] = value
+            continue
+        if isinstance(evalued, bytes):
+            evalued = evalued.decode("utf-8")
+        if isinstance(evalued, str):
+            # Ensure utf-8 encoding
+            evalued = evalued.encode("utf-8")
+        if isinstance(evalued, int):
+            evalued = str(evalued)
+
+        if len(evalued) > 0:
+            json_result[key] = json.loads(evalued)
+        else:
+            json_result[key] = value
+    return json_result
 
 
 def eprint(*args, **kwargs):
