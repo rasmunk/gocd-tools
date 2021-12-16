@@ -18,7 +18,7 @@ ACCEPT_HEADER_3 = {"Accept": API_VERSION_3, **JSON_HEADER}
 ACCEPT_HEADER_4 = {"Accept": API_VERSION_4, **JSON_HEADER}
 
 GO_DATA_DIR = "/godata"
-GO_SECRET_DIR = "/gosecrets"
+GO_SECRET_DIR = "/gosecret"
 GO_SECRET_DB_FILE = "secrets.yml"
 GO_CONFIG_DIR = os.path.join(os.path.expanduser("~"), ".{}".format(PACKAGE_NAME))
 GO_PLUGIN_DIR = os.path.join(GO_DATA_DIR, "plugins")
