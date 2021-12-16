@@ -1,6 +1,6 @@
 import requests
 import json
-from defaults import (
+from gocd_tools.defaults import (
     authorization_config_path,
     cluster_profiles_path,
     elastic_agent_profile_path,
@@ -18,7 +18,7 @@ from defaults import (
     ELASTIC_AGENT_URL,
     CONFIG_REPO_URL,
 )
-from config import load_config
+from gocd_tools.config import load_config
 
 
 def get(session, url, *args, **kwargs):
@@ -103,7 +103,8 @@ def get_secret_manager(session, id):
 
 
 def init_server():
-    pass
+    response = {"msg": "init server"}
+    return True, response
 
 
 def configure_server():

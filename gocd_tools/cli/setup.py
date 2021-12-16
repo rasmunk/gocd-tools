@@ -39,11 +39,18 @@ def setup_cli(parser):
     server_parsers = setup_commands.add_parser(SERVER)
     add_server_groups(server_parsers)
     server_commands = server_parsers.add_subparsers(title="COMMAND")
-    setup_generate_parser = server_commands.add_parser("init")
-
-    setup_generate_parser.set_defaults(
+    server_init_parser = server_commands.add_parser("init")
+    server_init_parser.set_defaults(
         func=cli_exec,
         module_path="gocd_tools.server",
         module_name="server",
         func_name="init_server",
+    )
+
+    server_configure_parser = server_commands.add_parser("configure")
+    server_configure_parser.set_defaults(
+        func=cli_exec,
+        module_path="gocd_tools.server",
+        module_name="server",
+        func_name="configure_server",
     )
