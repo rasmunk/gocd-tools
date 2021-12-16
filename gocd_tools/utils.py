@@ -68,14 +68,15 @@ def process(execute_kwargs=None):
     return output_results
 
 
-def format_output_json(process_result):
+def format_output_json(result):
     json_result = {}
-    for key, value in process_result.items():
+    for key, value in result.items():
         try:
             evalued = literal_eval(value)
         except SyntaxError:
             json_result[key] = value
             continue
+
         if isinstance(evalued, bytes):
             evalued = evalued.decode("utf-8")
         if isinstance(evalued, str):
@@ -85,7 +86,10 @@ def format_output_json(process_result):
             evalued = str(evalued)
 
         if len(evalued) > 0:
-            json_result[key] = json.loads(evalued)
+            try:
+                json_result[key] = json.loads(evalued)
+            except Exception:
+                json_result[key] = evalued
         else:
             json_result[key] = value
     return json_result

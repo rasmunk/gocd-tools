@@ -17,10 +17,9 @@ from defaults import (
     CLUSTER_PROFILES_URL,
     ELASTIC_AGENT_URL,
     CONFIG_REPO_URL,
-    
-
 )
 from config import load_config
+
 
 def get(session, url, *args, **kwargs):
     try:
@@ -252,7 +251,6 @@ def configure_server():
                 if not created:
                     print("Failed to create repository config: {}".format(created))
                     exit(1)
-
 
 
 def cleanup_server():
