@@ -100,6 +100,7 @@ def configure_secrets():
             results = process(execute_kwargs=execute_kwargs)
             for result in results:
                 json_result = format_output_json(result)
+
                 if (
                     "status" in json_result["error"]
                     and json_result["error"]["status"] == "failed"

@@ -68,30 +68,37 @@ def process(execute_kwargs=None):
     return output_results
 
 
+def ensure_string(value):
+    return_value = None
+    if isinstance(value, bytes):
+        return_value = value.decode("utf-8")
+    if isinstance(value, str):
+        # Ensure utf-8 encoding
+        return_value = value.encode("utf-8")
+    if isinstance(value, int):
+        return_value = str(value)
+    return return_value
+
+
 def format_output_json(result):
     json_result = {}
     for key, value in result.items():
         try:
             evalued = literal_eval(value)
         except SyntaxError:
-            json_result[key] = value
+            # still try to encode it correctly
+            string_value = ensure_string(value)
+            json_result[key] = string_value
             continue
 
-        if isinstance(evalued, bytes):
-            evalued = evalued.decode("utf-8")
-        if isinstance(evalued, str):
-            # Ensure utf-8 encoding
-            evalued = evalued.encode("utf-8")
-        if isinstance(evalued, int):
-            evalued = str(evalued)
-
-        if len(evalued) > 0:
+        string_evalued = ensure_string(evalued)
+        if len(string_evalued) > 0:
             try:
-                json_result[key] = json.loads(evalued)
+                json_result[key] = json.loads(string_evalued)
             except Exception:
-                json_result[key] = evalued
+                json_result[key] = string_evalued
         else:
-            json_result[key] = value
+            json_result[key] = string_evalued
     return json_result
 
 
