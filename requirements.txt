@@ -1,2 +1,2 @@
 requests
-PyYAML>=6.*
+PyYAML>=5.*
