@@ -20,8 +20,10 @@ ACCEPT_HEADER_4 = {"Accept": API_VERSION_4, **JSON_HEADER}
 # API default endpoints
 if "BASE_URL" in os.environ:
     BASE_URL = os.environ["BASE_URL"]
-else:
-    BASE_URL = ""
+
+if BASE_URL == "":
+    print("The require environment variable BASE_URL was empty: {}".format(BASE_URL))
+    exit(1)
 
 # Public URLs
 GO_URL = "{}/go".format(BASE_URL)

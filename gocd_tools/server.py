@@ -65,6 +65,7 @@ def authenticate(session):
     resp = get(session, AUTH_URL, headers=AUTHORIZATION_HEADER)
     if resp.status_code == 200:
         return True
+    print("Failed to authenticate: {} - {}".format(resp.status_code, resp.text))
     return False
 
 
