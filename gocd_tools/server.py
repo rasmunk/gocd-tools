@@ -10,6 +10,7 @@ from gocd_tools.defaults import (
     ACCEPT_HEADER_2,
     ACCEPT_HEADER_3,
     ACCEPT_HEADER_4,
+    BASE_URL,
     AUTH_URL,
     AUTHORIZATION_HEADER,
     SECRET_CONFIG_URL,
@@ -104,38 +105,14 @@ def get_secret_manager(session, id):
 
 
 def init_server():
-    response = {"msg": "init server"}
-    return True, response
-
-
-def configure_server():
-    cluster_profiles_configs = load_config(path=cluster_profiles_path)
-    elastic_agent_configs = load_config(path=elastic_agent_profile_path)
-    repositories_configs = load_config(path=repositories_path)
-    # TODO, load and create the authorization config
+    """ As the first thing, the server's authorization config
+    is defined.
+    """
+    print("Configure the Authorization config on server: {}".format(BASE_URL))
     authorization_configs = load_config(path=authorization_config_path)
-    secret_managers_configs = load_config(path=secret_managers_config_path)
 
-    configs = [
-        {"path": cluster_profiles_path, "config": cluster_profiles_configs},
-        {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
-        {"path": repositories_path, "config": repositories_configs},
-        {"path": secret_managers_config_path, "config": secret_managers_configs},
-        {"path": authorization_config_path, "config": authorization_configs},
-    ]
-
-    for config in configs:
-        if not config["config"]:
-            print("Failed loading: {}".format(config["path"]))
-            exit(1)
-
+    response = {}
     with requests.Session() as session:
-        print("Authenticate")
-        authed = authenticate(session)
-        if not authed:
-            exit(2)
-
-        print("Setup Authorization config")
         for auth_config in authorization_configs:
             exists = get_type(
                 session,
@@ -151,10 +128,40 @@ def configure_server():
                     headers=ACCEPT_HEADER_2,
                 )
                 if not created:
-                    print(
-                        "Failed to create authorization config: {}".format(auth_config)
-                    )
-                    exit(4)
+                    response[
+                        "msg"
+                    ] = "Failed to create authorization config: {}".format(auth_config)
+                    return False, response
+    response["msg"] = "The Authorization config for: {} was completed".format(BASE_URL)
+    return True, response
+
+
+def configure_server():
+    cluster_profiles_configs = load_config(path=cluster_profiles_path)
+    elastic_agent_configs = load_config(path=elastic_agent_profile_path)
+    repositories_configs = load_config(path=repositories_path)
+    # TODO, load and create the authorization config
+    secret_managers_configs = load_config(path=secret_managers_config_path)
+
+    configs = [
+        {"path": cluster_profiles_path, "config": cluster_profiles_configs},
+        {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
+        {"path": repositories_path, "config": repositories_configs},
+        {"path": secret_managers_config_path, "config": secret_managers_configs},
+    ]
+    response = {}
+
+    for config in configs:
+        if not config["config"]:
+            response["msg"] = "Failed loading: {}".format(config["path"])
+            return False, response
+
+    with requests.Session() as session:
+        print("Authenticate")
+        authed = authenticate(session)
+        if not authed:
+            response["msg"] = "Failed to authenticate"
+            return False, response
 
         print("Setup Secret Manager")
         for secret_manager_config in secret_managers_configs:
@@ -172,12 +179,10 @@ def configure_server():
                     headers=ACCEPT_HEADER_3,
                 )
                 if not created:
-                    print(
-                        "Failed to create secret config: {}".format(
-                            secret_manager_config
-                        )
+                    response["msg"] = "Failed to create secret config: {}".format(
+                        secret_manager_config
                     )
-                    exit(5)
+                    return False, response
 
         print("Setup Cluster profiles")
         # Create cluster profile
@@ -196,8 +201,10 @@ def configure_server():
                     headers=ACCEPT_HEADER_1,
                 )
                 if not created:
-                    print("Failed to create cluster profile: {}".format(cluster_config))
-                    exit(6)
+                    response["msg"] = "Failed to create cluster profile: {}".format(
+                        cluster_config
+                    )
+                    return False, response
 
         for agent_config in elastic_agent_configs:
             existing_agent = get_type(
@@ -211,8 +218,10 @@ def configure_server():
                     headers=ACCEPT_HEADER_2,
                 )
                 if not created:
-                    print("Failed to create elastic agent profile: {}".format(created))
-                    exit(7)
+                    response[
+                        "msg"
+                    ] = "Failed to create elastic agent profile: {}".format(created)
+                    return False, response
 
         print("Create Config Repositories")
         for repository_config in repositories_configs:
@@ -251,8 +260,10 @@ def configure_server():
                     headers=ACCEPT_HEADER_4,
                 )
                 if not created:
-                    print("Failed to create repository config: {}".format(created))
-                    exit(1)
+                    response["msg"] = "Failed to create repository config: {}".format(
+                        created
+                    )
+                    return False, response
 
 
 def cleanup_server():
