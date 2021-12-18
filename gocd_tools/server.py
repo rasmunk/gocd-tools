@@ -6,6 +6,9 @@ from gocd_tools.defaults import (
     elastic_agent_profile_path,
     repositories_path,
     secret_managers_config_path,
+    GITHUB_AUTH_URL,
+    GITHUB_GOCD_AUTH_URL,
+    GITHUB_AUTHORIZATION_HEADER,
     ACCEPT_HEADER_1,
     ACCEPT_HEADER_2,
     ACCEPT_HEADER_3,
@@ -20,6 +23,14 @@ from gocd_tools.defaults import (
     CONFIG_REPO_URL,
 )
 from gocd_tools.config import load_config
+
+
+def head(session, url, *args, **kwargs):
+    try:
+        return session.head(url, *args, **kwargs)
+    except Exception as err:
+        print("Failed HEAD request: {}".format(err))
+    return None
 
 
 def get(session, url, *args, **kwargs):
@@ -62,8 +73,56 @@ def create_type(session, url, data=None, headers=None):
     return False
 
 
-def authenticate(session):
-    resp = get(session, AUTH_URL, headers=AUTHORIZATION_HEADER)
+def authenticate_github(session):
+    # Login to regular github
+    github_auth = get(session, GITHUB_AUTH_URL, headers=GITHUB_AUTHORIZATION_HEADER)
+    if github_auth.status_code != 200:
+        print(
+            "Failed to authenticate with GitHub: {} - {}".format(
+                github_auth.status_code, github_auth.text
+            )
+        )
+        return False
+
+    redirect_location = get(
+        session,
+        GITHUB_GOCD_AUTH_URL,
+        allow_redirects=False,
+        headers=GITHUB_AUTHORIZATION_HEADER,
+    )
+    if not redirect_location.status_code == 302:
+        print(
+            "Failed to get the GitHub auth location: {} - {}".format(
+                redirect_location.status_code, redirect_location.text
+            )
+        )
+        return False
+
+    if "location" not in redirect_location.headers:
+        print(
+            "Location not available in the GitHUB auth response: {}".format(
+                redirect_location.headers
+            )
+        )
+        return False
+
+    # Get the URL location for the GitHub auth page.
+    # TODO, the location_url does not properly authorize
+    # the session with the existing github authentication.
+    # Potentially lookinto a library option like
+    # https://requests-oauthlib.readthedocs.io/en/latest/oauth2_workflow.html
+    # location_url = redirect_location.headers["location"]
+    # github_resp = get(
+    #    session, location_url, allow_redirects=False
+    # )
+    #    if not github_resp.status_code == 200:
+    #        return False
+    #    return True
+    return False
+
+
+def authenticate(session, allow_redirects=False, **auth_kwargs):
+    resp = get(session, AUTH_URL, headers=AUTHORIZATION_HEADER, **auth_kwargs)
     if resp.status_code == 200:
         return True
     print("Failed to authenticate: {} - {}".format(resp.status_code, resp.text))
@@ -137,6 +196,7 @@ def init_server():
 
 
 def configure_server():
+    authorization_configs = load_config(path=authorization_config_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     repositories_configs = load_config(path=repositories_path)
@@ -144,6 +204,7 @@ def configure_server():
     secret_managers_configs = load_config(path=secret_managers_config_path)
 
     configs = [
+        {"path": authorization_config_path, "config": authorization_configs},
         {"path": cluster_profiles_path, "config": cluster_profiles_configs},
         {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
         {"path": repositories_path, "config": repositories_configs},
@@ -158,9 +219,18 @@ def configure_server():
 
     with requests.Session() as session:
         print("Authenticate")
+        # github_authed = authenticate_github(session)
+        # if not github_authed:
+        #    response["msg"] = "Failed to authenticate against: {}".format(
+        #        GITHUB_AUTH_URL
+        #    )
+        #    return False, response
+
         authed = authenticate(session)
         if not authed:
-            response["msg"] = "Failed to authenticate"
+            response["msg"] = "Failed to authenticate against: {}".format(
+                GITHUB_GOCD_AUTH_URL
+            )
             return False, response
 
         print("Setup Secret Manager")
@@ -272,4 +342,5 @@ def cleanup_server():
 
 if __name__ == "__main__":
     init_server()
+    configure_server()
     cleanup_server()

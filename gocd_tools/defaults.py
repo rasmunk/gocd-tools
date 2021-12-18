@@ -17,6 +17,9 @@ ACCEPT_HEADER_2 = {"Accept": API_VERSION_2, **JSON_HEADER}
 ACCEPT_HEADER_3 = {"Accept": API_VERSION_3, **JSON_HEADER}
 ACCEPT_HEADER_4 = {"Accept": API_VERSION_4, **JSON_HEADER}
 
+GITHUB_API_VERSION = "application/vnd.github.v3+json"
+GITHUB_ACCEPT_HEADER = {"Accept": GITHUB_API_VERSION}
+
 # API default endpoints
 if "BASE_URL" in os.environ:
     BASE_URL = os.environ["BASE_URL"]
@@ -25,10 +28,13 @@ if BASE_URL == "":
     print("The require environment variable BASE_URL was empty: {}".format(BASE_URL))
     exit(1)
 
+# Github URLs
+GITHUB_AUTH_URL = "https://api.github.com/user"
+GITHUB_GOCD_AUTH_URL = ""
+
 # Public URLs
 GO_URL = "{}/go".format(BASE_URL)
 API_URL = "{}/api".format(GO_URL)
-
 AUTH_URL = "{}/current_user".format(API_URL)
 ELASTIC_AGENT_URL = "{}/elastic/profiles".format(API_URL)
 ADMIN_URL = "{}/admin".format(API_URL)
@@ -47,11 +53,18 @@ else:
     # The AUTH_TOKEN is the one generate within the GOCD server
     # (Not GitHub)
 
+if "GITHUB_AUTH_TOKEN" in os.environ:
+    GITHUB_AUTH_TOKEN = os.environ["GITHUB_AUTH_TOKEN"]
+
 AUTHORIZATION_HEADER = {
     "Authorization": "bearer {}".format(AUTH_TOKEN),
     **ACCEPT_HEADER_1,
 }
 
+GITHUB_AUTHORIZATION_HEADER = {
+    "Authorization": "token {}".format(GITHUB_AUTH_TOKEN),
+    **GITHUB_ACCEPT_HEADER,
+}
 
 # Server defaults
 GO_DATA_DIR = "/godata"
