@@ -21,11 +21,15 @@ GITHUB_API_VERSION = "application/vnd.github.v3+json"
 GITHUB_ACCEPT_HEADER = {"Accept": GITHUB_API_VERSION}
 
 # API default endpoints
-if "BASE_URL" in os.environ:
-    BASE_URL = os.environ["BASE_URL"]
+if "GOCD_BASE_URL" in os.environ:
+    GOCD_BASE_URL = os.environ["GOCD_BASE_URL"]
 
-if BASE_URL == "":
-    print("The require environment variable BASE_URL was empty: {}".format(BASE_URL))
+if GOCD_BASE_URL == "":
+    print(
+        "The require environment variable GOCD_BASE_URL was empty: {}".format(
+            GOCD_BASE_URL
+        )
+    )
     exit(1)
 
 # Github URLs
@@ -33,7 +37,7 @@ GITHUB_AUTH_URL = "https://api.github.com/user"
 GITHUB_GOCD_AUTH_URL = ""
 
 # Public URLs
-GO_URL = "{}/go".format(BASE_URL)
+GO_URL = "{}/go".format(GOCD_BASE_URL)
 API_URL = "{}/api".format(GO_URL)
 AUTH_URL = "{}/current_user".format(API_URL)
 ELASTIC_AGENT_URL = "{}/elastic/profiles".format(API_URL)
@@ -46,18 +50,27 @@ CLUSTER_PROFILES_URL = "{}/elastic/cluster_profiles".format(ADMIN_URL)
 CONFIG_REPO_URL = "{}/config_repos".format(ADMIN_URL)
 SECRET_CONFIG_URL = "{}/secret_configs".format(ADMIN_URL)
 
-if "AUTH_TOKEN" in os.environ:
-    AUTH_TOKEN = os.environ["AUTH_TOKEN"]
-else:
-    AUTH_TOKEN = ""
-    # The AUTH_TOKEN is the one generate within the GOCD server
+if "GOCD_AUTH_TOKEN" in os.environ:
+    GOCD_AUTH_TOKEN = os.environ["GOCD_AUTH_TOKEN"]
+    # The GOCD_AUTH_TOKEN is the one generate within the GOCD server
     # (Not GitHub)
+
+if GOCD_AUTH_TOKEN == "":
+    print(
+        "The required environment variable GOCD_AUTH_TOKEN was empty: {}".format(
+            GOCD_AUTH_TOKEN
+        )
+    )
+    exit(1)
 
 if "GITHUB_AUTH_TOKEN" in os.environ:
     GITHUB_AUTH_TOKEN = os.environ["GITHUB_AUTH_TOKEN"]
+else:
+    GITHUB_AUTH_TOKEN = ""
+
 
 AUTHORIZATION_HEADER = {
-    "Authorization": "bearer {}".format(AUTH_TOKEN),
+    "Authorization": "bearer {}".format(GOCD_AUTH_TOKEN),
     **ACCEPT_HEADER_1,
 }
 

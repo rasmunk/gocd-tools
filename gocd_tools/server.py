@@ -13,7 +13,7 @@ from gocd_tools.defaults import (
     ACCEPT_HEADER_2,
     ACCEPT_HEADER_3,
     ACCEPT_HEADER_4,
-    BASE_URL,
+    GOCD_BASE_URL,
     AUTH_URL,
     AUTHORIZATION_HEADER,
     SECRET_CONFIG_URL,
@@ -167,7 +167,8 @@ def init_server():
     """ As the first thing, the server's authorization config
     is defined.
     """
-    print("Configure the Authorization config on server: {}".format(BASE_URL))
+    print("Init server")
+    print("Configure the Authorization config on server: {}".format(GOCD_BASE_URL))
     authorization_configs = load_config(path=authorization_config_path)
 
     response = {}
@@ -191,7 +192,9 @@ def init_server():
                         "msg"
                     ] = "Failed to create authorization config: {}".format(auth_config)
                     return False, response
-    response["msg"] = "The Authorization config for: {} was completed".format(BASE_URL)
+    response["msg"] = "The Authorization config for: {} was completed".format(
+        GOCD_BASE_URL
+    )
     return True, response
 
 
@@ -305,9 +308,9 @@ def configure_server():
                 # Check whether a secret auth token is required
                 extra_config_kwargs = {}
                 if is_auth_repo(repository_config):
-                    repo_auth_data = repo_auth_data(repository_config)
+                    auth_data = repo_auth_data(repository_config)
                     repo_secret_manager = get_repo_secret_manager(repository_config)
-                    secret = get_repo_secret(repo_auth_data)
+                    secret = get_repo_secret(auth_data)
 
                     secret_manager = get_secret_manager(session, repo_secret_manager)
                     if not secret_manager:
