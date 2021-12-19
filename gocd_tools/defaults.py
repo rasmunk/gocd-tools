@@ -54,14 +54,8 @@ if "GOCD_AUTH_TOKEN" in os.environ:
     GOCD_AUTH_TOKEN = os.environ["GOCD_AUTH_TOKEN"]
     # The GOCD_AUTH_TOKEN is the one generate within the GOCD server
     # (Not GitHub)
-
-if GOCD_AUTH_TOKEN == "":
-    print(
-        "The required environment variable GOCD_AUTH_TOKEN was empty: {}".format(
-            GOCD_AUTH_TOKEN
-        )
-    )
-    exit(1)
+else:
+    GOCD_AUTH_TOKEN = ""
 
 if "GITHUB_AUTH_TOKEN" in os.environ:
     GITHUB_AUTH_TOKEN = os.environ["GITHUB_AUTH_TOKEN"]

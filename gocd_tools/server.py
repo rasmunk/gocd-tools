@@ -6,6 +6,7 @@ from gocd_tools.defaults import (
     elastic_agent_profile_path,
     repositories_path,
     secret_managers_config_path,
+    GOCD_AUTH_TOKEN,
     GITHUB_AUTH_URL,
     GITHUB_GOCD_AUTH_URL,
     GITHUB_AUTHORIZATION_HEADER,
@@ -74,6 +75,14 @@ def create_type(session, url, data=None, headers=None):
 
 
 def authenticate_github(session):
+    if GOCD_AUTH_TOKEN == "":
+        print(
+            "The required environment variable GOCD_AUTH_TOKEN was empty: {}".format(
+                GOCD_AUTH_TOKEN
+            )
+        )
+        return False
+
     # Login to regular github
     github_auth = get(session, GITHUB_AUTH_URL, headers=GITHUB_AUTHORIZATION_HEADER)
     if github_auth.status_code != 200:
