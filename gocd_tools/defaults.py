@@ -11,11 +11,13 @@ API_VERSION_1 = "application/vnd.go.cd.v1+json"
 API_VERSION_2 = "application/vnd.go.cd.v2+json"
 API_VERSION_3 = "application/vnd.go.cd.v3+json"
 API_VERSION_4 = "application/vnd.go.cd.v4+json"
+API_VERSION_7 = "application/vnd.go.cd.v7+json"
 
 ACCEPT_HEADER_1 = {"Accept": API_VERSION_1, **JSON_HEADER}
 ACCEPT_HEADER_2 = {"Accept": API_VERSION_2, **JSON_HEADER}
 ACCEPT_HEADER_3 = {"Accept": API_VERSION_3, **JSON_HEADER}
 ACCEPT_HEADER_4 = {"Accept": API_VERSION_4, **JSON_HEADER}
+ACCEPT_HEADER_7 = {"Accept": API_VERSION_7, **JSON_HEADER}
 
 GITHUB_API_VERSION = "application/vnd.github.v3+json"
 GITHUB_ACCEPT_HEADER = {"Accept": GITHUB_API_VERSION}
@@ -48,6 +50,7 @@ SECURITY_URL = "{}/security".format(ADMIN_URL)
 AUTHORIZATION_CONFIG_URL = "{}/auth_configs".format(SECURITY_URL)
 CLUSTER_PROFILES_URL = "{}/elastic/cluster_profiles".format(ADMIN_URL)
 CONFIG_REPO_URL = "{}/config_repos".format(ADMIN_URL)
+TEMPLATE_URL = "{}/templates".format(ADMIN_URL)
 SECRET_CONFIG_URL = "{}/secret_configs".format(ADMIN_URL)
 
 if "GOCD_AUTH_TOKEN" in os.environ:
@@ -102,6 +105,7 @@ elastic_agent_profile_path = os.path.join(
     default_config_path, "elastic_agent_profiles.yml"
 )
 repositories_path = os.path.join(default_config_path, "repositories.yml")
+templates_path = os.path.join(default_config_path, "templates.yml")
 authorization_config_path = os.path.join(default_config_path, "authorization.yml")
 secret_managers_config_path = os.path.join(default_config_path, "secret_managers.yml")
 

@@ -5,6 +5,7 @@ from gocd_tools.defaults import (
     cluster_profiles_path,
     elastic_agent_profile_path,
     repositories_path,
+    templates_path,
     secret_managers_config_path,
     GOCD_AUTH_TOKEN,
     GITHUB_AUTH_URL,
@@ -14,6 +15,7 @@ from gocd_tools.defaults import (
     ACCEPT_HEADER_2,
     ACCEPT_HEADER_3,
     ACCEPT_HEADER_4,
+    ACCEPT_HEADER_7,
     GOCD_BASE_URL,
     AUTH_URL,
     AUTHORIZATION_HEADER,
@@ -22,6 +24,7 @@ from gocd_tools.defaults import (
     CLUSTER_PROFILES_URL,
     ELASTIC_AGENT_URL,
     CONFIG_REPO_URL,
+    TEMPLATE_URL,
 )
 from gocd_tools.config import load_config
 
@@ -212,6 +215,7 @@ def configure_server():
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     repositories_configs = load_config(path=repositories_path)
+    templates_configs = load_config(path=templates_path)
     # TODO, load and create the authorization config
     secret_managers_configs = load_config(path=secret_managers_config_path)
 
@@ -220,6 +224,7 @@ def configure_server():
         {"path": cluster_profiles_path, "config": cluster_profiles_configs},
         {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
         {"path": repositories_path, "config": repositories_configs},
+        {"path": templates_path, "config": templates_configs},
         {"path": secret_managers_config_path, "config": secret_managers_configs},
     ]
     response = {}
@@ -303,6 +308,21 @@ def configure_server():
                     response[
                         "msg"
                     ] = "Failed to create elastic agent profile: {}".format(created)
+                    return False, response
+
+        print("Create Template Configs")
+        for template_config in templates_configs:
+            existing_template = get_type(
+                session, TEMPLATE_URL, template_config["name"], headers=ACCEPT_HEADER_7
+            )
+            if not existing_template:
+                created = create_type(
+                    session, TEMPLATE_URL, data=template_config, headers=ACCEPT_HEADER_7
+                )
+                if not created:
+                    response["msg"] = "Failed to create template config: {}".format(
+                        created
+                    )
                     return False, response
 
         print("Create Config Repositories")
