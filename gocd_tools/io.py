@@ -23,7 +23,7 @@ def load(path, mode="r", readlines=False, handler=None, **load_kwargs):
     return False
 
 
-def write(path, content, mode="w", mkdirs=False, handler=None, **hander_kwargs):
+def write(path, content, mode="w", mkdirs=False, handler=None, **handler_kwargs):
     dir_path = os.path.dirname(path)
     if not os.path.exists(dir_path) and mkdirs:
         if not makedirs(dir_path):
@@ -31,7 +31,7 @@ def write(path, content, mode="w", mkdirs=False, handler=None, **hander_kwargs):
     try:
         with open(path, mode) as fh:
             if handler:
-                handler.dump(content, fh, **hander_kwargs)
+                handler.dump(content, fh, **handler_kwargs)
             else:
                 fh.write(content)
         return True
