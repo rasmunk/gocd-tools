@@ -235,7 +235,7 @@ def configure_server():
 
     for config in configs:
         if not config["config"]:
-            response["msg"] = "Failed loading: {}".format(config["path"])
+            response["msg"] = "Failed loading: {} - config: {}".format(config["path"], config["config"])
             return False, response
 
     with requests.Session() as session:
@@ -259,7 +259,7 @@ def configure_server():
             exists = get_type(
                 session,
                 ROLE_URL,
-                role_config["id"],
+                role_config["name"],
                 headers=ACCEPT_HEADER_3,
             )
             if not exists:
