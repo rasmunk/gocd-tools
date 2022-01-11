@@ -5,6 +5,7 @@ from gocd_tools.defaults import (
     cluster_profiles_path,
     elastic_agent_profile_path,
     repositories_path,
+    roles_path,
     templates_path,
     secret_managers_config_path,
     GOCD_AUTH_TOKEN,
@@ -23,6 +24,7 @@ from gocd_tools.defaults import (
     AUTHORIZATION_CONFIG_URL,
     CLUSTER_PROFILES_URL,
     ELASTIC_AGENT_URL,
+    ROLE_URL,
     CONFIG_REPO_URL,
     TEMPLATE_URL,
 )
@@ -215,6 +217,7 @@ def configure_server():
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     repositories_configs = load_config(path=repositories_path)
+    roles_configs = load_config(path=roles_path)
     templates_configs = load_config(path=templates_path)
     # TODO, load and create the authorization config
     secret_managers_configs = load_config(path=secret_managers_config_path)
@@ -224,6 +227,7 @@ def configure_server():
         {"path": cluster_profiles_path, "config": cluster_profiles_configs},
         {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
         {"path": repositories_path, "config": repositories_configs},
+        {"path": roles_path, "config": roles_configs},
         {"path": templates_path, "config": templates_configs},
         {"path": secret_managers_config_path, "config": secret_managers_configs},
     ]
@@ -249,6 +253,27 @@ def configure_server():
                 GITHUB_GOCD_AUTH_URL
             )
             return False, response
+
+        print("Setup Roles")
+        for role_config in roles_configs:
+            exists = get_type(
+                session,
+                ROLE_URL,
+                role_config["id"],
+                headers=ACCEPT_HEADER_3,
+            )
+            if not exists:
+                created = create_type(
+                    session,
+                    ROLE_URL,
+                    data=role_config,
+                    headers=ACCEPT_HEADER_3,
+                )
+                if not created:
+                    response["msg"] = "Failed to create role: {}".format(
+                        role_config
+                    )
+                    return False, response
 
         print("Setup Secret Manager")
         for secret_manager_config in secret_managers_configs:

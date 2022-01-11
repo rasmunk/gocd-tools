@@ -45,6 +45,7 @@ AUTH_URL = "{}/current_user".format(API_URL)
 ELASTIC_AGENT_URL = "{}/elastic/profiles".format(API_URL)
 ADMIN_URL = "{}/admin".format(API_URL)
 SECURITY_URL = "{}/security".format(ADMIN_URL)
+ROLE_URL = "{}/roles".format(SECURITY_URL)
 
 # Restricted URLs
 AUTHORIZATION_CONFIG_URL = "{}/auth_configs".format(SECURITY_URL)
@@ -105,6 +106,7 @@ elastic_agent_profile_path = os.path.join(
     default_config_path, "elastic_agent_profiles.yml"
 )
 repositories_path = os.path.join(default_config_path, "repositories.yml")
+roles_path = os.path.join(default_config_path, "roles.yml")
 templates_path = os.path.join(default_config_path, "templates.yml")
 authorization_config_path = os.path.join(default_config_path, "authorization.yml")
 secret_managers_config_path = os.path.join(default_config_path, "secret_managers.yml")
