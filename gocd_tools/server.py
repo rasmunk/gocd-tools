@@ -235,7 +235,9 @@ def configure_server():
 
     for config in configs:
         if not config["config"]:
-            response["msg"] = "Failed loading: {} - config: {}".format(config["path"], config["config"])
+            response["msg"] = "Failed loading: {} - config: {}".format(
+                config["path"], config["config"]
+            )
             return False, response
 
     with requests.Session() as session:
@@ -257,22 +259,14 @@ def configure_server():
         print("Setup Roles")
         for role_config in roles_configs:
             exists = get_type(
-                session,
-                ROLE_URL,
-                role_config["name"],
-                headers=ACCEPT_HEADER_3,
+                session, ROLE_URL, role_config["name"], headers=ACCEPT_HEADER_3,
             )
             if not exists:
                 created = create_type(
-                    session,
-                    ROLE_URL,
-                    data=role_config,
-                    headers=ACCEPT_HEADER_3,
+                    session, ROLE_URL, data=role_config, headers=ACCEPT_HEADER_3,
                 )
                 if not created:
-                    response["msg"] = "Failed to create role: {}".format(
-                        role_config
-                    )
+                    response["msg"] = "Failed to create role: {}".format(role_config)
                     return False, response
 
         print("Setup Secret Manager")
@@ -360,7 +354,6 @@ def configure_server():
             )
             if not existing_repo:
                 # Check whether a secret auth token is required
-                extra_config_kwargs = {}
                 if is_auth_repo(repository_config):
                     auth_data = repo_auth_data(repository_config)
                     repo_secret_manager = get_repo_secret_manager(repository_config)
@@ -369,7 +362,8 @@ def configure_server():
                     secret_manager = get_secret_manager(session, repo_secret_manager)
                     if not secret_manager:
                         print(
-                            "Repo: {} tries to use secret manager: {} which doesn't exist".format(
+                            "Repo: {} tries to use secret manager: {}"
+                            " which doesn't exist".format(
                                 repository_config["id"], repo_secret_manager
                             )
                         )
@@ -391,6 +385,12 @@ def configure_server():
                         created
                     )
                     return False, response
+
+        if "msg" not in response:
+            response["msg"] = "Succesfully configured the {} endpoint".format(
+                GOCD_BASE_URL
+            )
+        return True, response
 
 
 def cleanup_server():
