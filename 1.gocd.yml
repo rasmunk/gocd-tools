@@ -1,0 +1,14 @@
+environments:
+  pypi_package:
+    pipelines:
+      - gocd_tools
+pipelines:
+  gocd_tools:
+    group: pypi_package
+    locking: off
+    materials:
+      gocd_tools_git:  # this is the name of material
+        # says about type of material and url at once
+        git: https://github.com/rasmunk/gocd-tools.git
+        branch: main
+    template: pypi_package
