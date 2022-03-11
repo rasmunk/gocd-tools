@@ -55,19 +55,29 @@ def post(session, url, *args, **kwargs):
     return None
 
 
+def put(session, url, *args, **kwargs):
+    try:
+        return session.put(url, *args, **kwargs)
+    except Exception as err:
+        print("Failed PUT request: {}".format(err))
+    return None
+
+
 def get_type(session, base_url, id, headers=None):
     id_url = "{}/{}".format(base_url, id)
     resp = get(session, id_url, headers=headers)
     if resp.status_code == 200:
-        return resp.text
-    return None
+        return resp.headers, resp.text
+    print("Failed to get type: {}:{}".format(resp.status_code, resp.text))
+    return None, None
 
 
 def get_types(session, base_url, headers=None):
     resp = get(session, base_url, headers=headers)
     if resp.status_code == 200:
-        return resp.text
-    return None
+        return resp.headers, resp.text
+    print("Failed to get types: {}:{}".format(resp.status_code, resp.text))
+    return None, None
 
 
 def create_type(session, url, data=None, headers=None):
@@ -75,7 +85,17 @@ def create_type(session, url, data=None, headers=None):
     created = post(session, url, data=json_data, headers=headers)
     if created.status_code == 200:
         return True
-    print("Failed to create type: {}".format(created.text))
+    print("Failed to create type: {}:{}".format(created.status_code, created.text))
+    return False
+
+
+def update_type(session, base_url, id, data=None, headers=None):
+    id_url = "{}/{}".format(base_url, id)
+    json_data = json.dumps(data)
+    updated = put(session, id_url, data=json_data, headers=headers)
+    if updated.status_code == 200 or updated.status_code == 201:
+        return True
+    print("Failed to update type: {}:{}".format(updated.status_code, updated.text))
     return False
 
 
@@ -212,6 +232,32 @@ def init_server():
     return True, response
 
 
+def setup(session, configs, url, headers, identifer_variable="id"):
+    response = {}
+    for config in configs:
+        resp_headers, exists = get_type(
+            session, url, config[identifer_variable], headers=headers,
+        )
+        if not exists:
+            created = create_type(session, url, data=config, headers=headers)
+            if not created:
+                response["msg"] = "Failed to create: {}".format(config)
+                return False, response
+        else:
+            update_headers = {"If-Match": resp_headers["ETag"], **headers}
+            updated = update_type(
+                session,
+                url,
+                config[identifer_variable],
+                data=config,
+                headers=update_headers,
+            )
+            if not updated:
+                response["msg"] = "Failed to update: {}".format(config)
+                return False, response
+        return True, {}
+
+
 def configure_server():
     authorization_configs = load_config(path=authorization_config_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
@@ -248,7 +294,6 @@ def configure_server():
         #        GITHUB_AUTH_URL
         #    )
         #    return False, response
-
         authed = authenticate(session)
         if not authed:
             response["msg"] = "Failed to authenticate against: {}".format(
@@ -256,95 +301,48 @@ def configure_server():
             )
             return False, response
 
-        print("Setup Roles")
-        for role_config in roles_configs:
-            exists = get_type(
-                session, ROLE_URL, role_config["name"], headers=ACCEPT_HEADER_3,
-            )
-            if not exists:
-                created = create_type(
-                    session, ROLE_URL, data=role_config, headers=ACCEPT_HEADER_3,
-                )
-                if not created:
-                    response["msg"] = "Failed to create role: {}".format(role_config)
-                    return False, response
+        # print("Setup Roles")
+        # success, response = setup(
+        #     session, roles_configs, ROLE_URL, ACCEPT_HEADER_3, identifer_variable="name"
+        # )
+        # if not success:
+        #     return False, response
+        # TODO, needs re-authentication after this point because the role has potentially been updated.
 
-        print("Setup Secret Manager")
-        for secret_manager_config in secret_managers_configs:
-            exists = get_type(
-                session,
-                SECRET_CONFIG_URL,
-                secret_manager_config["id"],
-                headers=ACCEPT_HEADER_3,
-            )
-            if not exists:
-                created = create_type(
-                    session,
-                    SECRET_CONFIG_URL,
-                    data=secret_manager_config,
-                    headers=ACCEPT_HEADER_3,
-                )
-                if not created:
-                    response["msg"] = "Failed to create secret config: {}".format(
-                        secret_manager_config
-                    )
-                    return False, response
+        print("Setup Secret Managers")
+        success, response = setup(
+            session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
+        )
+        if not success:
+            return False, response
 
-        print("Setup Cluster profiles")
-        # Create cluster profile
-        for cluster_config in cluster_profiles_configs:
-            existing_cluster = get_type(
-                session,
-                CLUSTER_PROFILES_URL,
-                cluster_config["id"],
-                headers=ACCEPT_HEADER_1,
-            )
-            if not existing_cluster:
-                created = create_type(
-                    session,
-                    CLUSTER_PROFILES_URL,
-                    data=cluster_config,
-                    headers=ACCEPT_HEADER_1,
-                )
-                if not created:
-                    response["msg"] = "Failed to create cluster profile: {}".format(
-                        cluster_config
-                    )
-                    return False, response
+        print("Setup Cluster Profiles")
+        success, response = setup(
+            session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
+        )
+        if not success:
+            return False, response
 
-        for agent_config in elastic_agent_configs:
-            existing_agent = get_type(
-                session, ELASTIC_AGENT_URL, agent_config["id"], headers=ACCEPT_HEADER_2
-            )
-            if not existing_agent:
-                created = create_type(
-                    session,
-                    ELASTIC_AGENT_URL,
-                    data=agent_config,
-                    headers=ACCEPT_HEADER_2,
-                )
-                if not created:
-                    response[
-                        "msg"
-                    ] = "Failed to create elastic agent profile: {}".format(created)
-                    return False, response
+        print("Setup Elastic Agent Configs")
+        success, response = setup(
+            session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
+        )
+        if not success:
+            return False, response
 
         print("Create Template Configs")
-        for template_config in templates_configs:
-            existing_template = get_type(
-                session, TEMPLATE_URL, template_config["name"], headers=ACCEPT_HEADER_7
-            )
-            if not existing_template:
-                created = create_type(
-                    session, TEMPLATE_URL, data=template_config, headers=ACCEPT_HEADER_7
-                )
-                if not created:
-                    response["msg"] = "Failed to create template config: {}".format(
-                        created
-                    )
-                    return False, response
+        success, response = setup(
+            session,
+            templates_configs,
+            TEMPLATE_URL,
+            ACCEPT_HEADER_7,
+            identifer_variable="name",
+        )
+        if not success:
+            return False, response
 
         print("Create Config Repositories")
+        # setup(session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4)
         for repository_config in repositories_configs:
             existing_repo = get_type(
                 session,
@@ -383,6 +381,19 @@ def configure_server():
                 if not created:
                     response["msg"] = "Failed to create repository config: {}".format(
                         created
+                    )
+                    return False, response
+            else:
+                updated = update_type(
+                    session,
+                    CONFIG_REPO_URL,
+                    repository_config["id"],
+                    data=repository_config,
+                    headers=ACCEPT_HEADER_4,
+                )
+                if not updated:
+                    response["msg"] = "Failed to update repository config: {}".format(
+                        repository_config
                     )
                     return False, response
 
