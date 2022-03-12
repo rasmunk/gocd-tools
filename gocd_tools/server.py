@@ -68,7 +68,7 @@ def get_type(session, base_url, id, headers=None):
     resp = get(session, id_url, headers=headers)
     if resp.status_code == 200:
         return resp.headers, resp.text
-    print("Failed to get type: {}:{}".format(resp.status_code, resp.text))
+    print("Failed to find: {}:{}".format(resp.status_code, resp.text))
     return None, None
 
 
@@ -76,7 +76,7 @@ def get_types(session, base_url, headers=None):
     resp = get(session, base_url, headers=headers)
     if resp.status_code == 200:
         return resp.headers, resp.text
-    print("Failed to get types: {}:{}".format(resp.status_code, resp.text))
+    print("{}:{}".format(resp.status_code, resp.text))
     return None, None
 
 
@@ -85,7 +85,7 @@ def create_type(session, url, data=None, headers=None):
     created = post(session, url, data=json_data, headers=headers)
     if created.status_code == 200:
         return True
-    print("Failed to create type: {}:{}".format(created.status_code, created.text))
+    print("{}:{}".format(created.status_code, created.text))
     return False
 
 
@@ -201,8 +201,7 @@ def init_server():
     """ As the first thing, the server's authorization config
     is defined.
     """
-    print("Init server")
-    print("Configure the Authorization config on server: {}".format(GOCD_BASE_URL))
+    print("Init server: {}".format(GOCD_BASE_URL))
     authorization_configs = load_config(path=authorization_config_path)
 
     response = {}
@@ -258,6 +257,61 @@ def setup(session, configs, url, headers, identifer_variable="id"):
         return True, {}
 
 
+def setup_config_repositories(session, configs, url, headers):
+    response = {}
+    for repository_config in configs:
+        existing_repo = get_type(
+            session, url, repository_config["id"], headers=headers,
+        )
+        if not existing_repo:
+            # Check whether a secret auth token is required
+            if is_auth_repo(repository_config):
+                auth_data = repo_auth_data(repository_config)
+                repo_secret_manager = get_repo_secret_manager(repository_config)
+                secret = get_repo_secret(auth_data)
+
+                secret_manager = get_secret_manager(session, repo_secret_manager)
+                if not secret_manager:
+                    print(
+                        "Repo: {} tries to use secret manager: {}"
+                        " which doesn't exist".format(
+                            repository_config["id"], repo_secret_manager
+                        )
+                    )
+                # secret = get_type(session, SECRET_CONFIG_URL)
+                # if not secret:
+                # created = create_secret(repository_config)
+                #    created = create_secret(repository_config)
+                #    if not created:
+                #        print("Failed to create new secret")
+                #    extra_config_kwargs["secret"] = created
+            created = create_type(
+                session,
+                url,
+                data={"id": repository_config["id"], **repository_config["config"]},
+                headers=headers,
+            )
+            if not created:
+                response["msg"] = "Failed to create repository config: {}".format(
+                    created
+                )
+                return False, response
+        else:
+            updated = update_type(
+                session,
+                url,
+                repository_config["id"],
+                data=repository_config,
+                headers=headers,
+            )
+            if not updated:
+                response["msg"] = "Failed to update repository config: {}".format(
+                    repository_config
+                )
+                return False, response
+    return True, {}
+
+
 def configure_server():
     authorization_configs = load_config(path=authorization_config_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
@@ -301,13 +355,21 @@ def configure_server():
             )
             return False, response
 
-        # print("Setup Roles")
-        # success, response = setup(
-        #     session, roles_configs, ROLE_URL, ACCEPT_HEADER_3, identifer_variable="name"
-        # )
-        # if not success:
-        #     return False, response
-        # TODO, needs re-authentication after this point because the role has potentially been updated.
+        print("Setup Roles")
+        success, response = setup(
+            session, roles_configs, ROLE_URL, ACCEPT_HEADER_3, identifer_variable="name"
+        )
+        if not success:
+            return False, response
+
+    with requests.Session() as session:
+        print("Re-Authenticate")
+        authed = authenticate(session)
+        if not authed:
+            response["msg"] = "Failed to authenticate against: {}".format(
+                GITHUB_GOCD_AUTH_URL
+            )
+            return False, response
 
         print("Setup Secret Managers")
         success, response = setup(
@@ -342,60 +404,12 @@ def configure_server():
             return False, response
 
         print("Create Config Repositories")
-        # setup(session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4)
-        for repository_config in repositories_configs:
-            existing_repo = get_type(
-                session,
-                CONFIG_REPO_URL,
-                repository_config["id"],
-                headers=ACCEPT_HEADER_4,
-            )
-            if not existing_repo:
-                # Check whether a secret auth token is required
-                if is_auth_repo(repository_config):
-                    auth_data = repo_auth_data(repository_config)
-                    repo_secret_manager = get_repo_secret_manager(repository_config)
-                    secret = get_repo_secret(auth_data)
+        success, response = setup_config_repositories(
+            session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4
+        )
 
-                    secret_manager = get_secret_manager(session, repo_secret_manager)
-                    if not secret_manager:
-                        print(
-                            "Repo: {} tries to use secret manager: {}"
-                            " which doesn't exist".format(
-                                repository_config["id"], repo_secret_manager
-                            )
-                        )
-                    # secret = get_type(session, SECRET_CONFIG_URL)
-                    # if not secret:
-                    # created = create_secret(repository_config)
-                    #    created = create_secret(repository_config)
-                    #    if not created:
-                    #        print("Failed to create new secret")
-                    #    extra_config_kwargs["secret"] = created
-                created = create_type(
-                    session,
-                    CONFIG_REPO_URL,
-                    data={"id": repository_config["id"], **repository_config["config"]},
-                    headers=ACCEPT_HEADER_4,
-                )
-                if not created:
-                    response["msg"] = "Failed to create repository config: {}".format(
-                        created
-                    )
-                    return False, response
-            else:
-                updated = update_type(
-                    session,
-                    CONFIG_REPO_URL,
-                    repository_config["id"],
-                    data=repository_config,
-                    headers=ACCEPT_HEADER_4,
-                )
-                if not updated:
-                    response["msg"] = "Failed to update repository config: {}".format(
-                        repository_config
-                    )
-                    return False, response
+        if not success:
+            return False, response
 
         if "msg" not in response:
             response["msg"] = "Succesfully configured the {} endpoint".format(
