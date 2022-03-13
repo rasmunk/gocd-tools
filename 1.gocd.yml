@@ -1,5 +1,7 @@
 environments:
   pypi_package:
+    environments:
+      GIT_USER: "{{SECRET:[github][username]}}"
     pipelines:
       - gocd_tools
 pipelines:
@@ -11,4 +13,11 @@ pipelines:
         # says about type of material and url at once
         git: https://github.com/rasmunk/gocd-tools.git
         branch: main
+      publish_python_git:
+        git: https://github.com/rasmunk/publish-python-scripts.git
+        branch: main
+        username: ${GIT_USER}
+        password: "{{SECRET:[github][access_token]}}"
+    parameters:
+      ARGS: ''
     template: pypi_package
