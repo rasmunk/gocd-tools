@@ -238,6 +238,7 @@ def setup(session, configs, url, headers, identifer_variable="id"):
             session, url, config[identifer_variable], headers=headers,
         )
         if not exists:
+            print("Creating: {}".format(config[identifer_variable]))
             created = create_type(session, url, data=config, headers=headers)
             if not created:
                 response["msg"] = "Failed to create: {}".format(config)
@@ -254,16 +255,16 @@ def setup(session, configs, url, headers, identifer_variable="id"):
             if not updated:
                 response["msg"] = "Failed to update: {}".format(config)
                 return False, response
-        return True, {}
+    return True, {}
 
 
 def setup_config_repositories(session, configs, url, headers):
     response = {}
     for repository_config in configs:
-        existing_repo = get_type(
+        resp_headers, exists = get_type(
             session, url, repository_config["id"], headers=headers,
         )
-        if not existing_repo:
+        if not exists:
             # Check whether a secret auth token is required
             if is_auth_repo(repository_config):
                 auth_data = repo_auth_data(repository_config)
@@ -285,6 +286,7 @@ def setup_config_repositories(session, configs, url, headers):
                 #    if not created:
                 #        print("Failed to create new secret")
                 #    extra_config_kwargs["secret"] = created
+            print("Creating: {}".format(repository_config["id"]))
             created = create_type(
                 session,
                 url,
