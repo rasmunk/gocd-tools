@@ -13,13 +13,13 @@ pipelines:
         # says about type of material and url at once
         git: https://github.com/rasmunk/gocd-tools.git
         branch: main
-        destination: "gocd-tools"
-      publish_python_git:
-        git: https://github.com/rasmunk/publish-python-scripts.git
-        branch: main
-        username: ${GIT_USER}
-        password: "{{SECRET:[github][access_token]}}"
-        destination: "publish-python-scripts"
+        # destination: "gocd-tools"
+      # publish_python_git:
+      #   git: https://github.com/rasmunk/publish-python-scripts.git
+      #   branch: main
+      #   username: ${GIT_USER}
+      #   password: "{{SECRET:[github][access_token]}}"
+      #   destination: "publish-python-scripts"
     parameters:
       ARGS: ''
     template: pypi_package
