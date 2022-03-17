@@ -3,9 +3,9 @@ environments:
     environments:
       GIT_USER: "{{SECRET:[github][username]}}"
     pipelines:
-      - gocd_tools
+      - gocd-tools
 pipelines:
-  gocd_tools:
+  gocd-tools:
     group: pypi_package
     locking: off
     materials:
