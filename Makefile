@@ -5,7 +5,13 @@ ARGS=
 
 .PHONY: build
 
-all: clean build push
+all: init clean build push
+
+# Link to the original defaults.env if none other is setup
+init:
+ifeq (,$(wildcard ./.env))
+	ln -s defaults.env .env
+endif
 
 build:
 	python3 setup.py sdist bdist_wheel
@@ -18,7 +24,9 @@ clean:
 push:
 	docker push ${OWNER}/${IMAGE}:${TAG}
 
+installtests:
+	pip3 install -r tests/requirements.txt
+
 # The tests requires access to the docker socket
-test: 
-	$(MAKE) build
+test:
 	pytest -s -v tests/
