@@ -25,5 +25,4 @@ pipelines:
       SRC_DIRECTORY: gocd-tools
       TEST_DIRECTORY: gocd-tools
       PUSH_DIRECTORY: publish-python-scripts
-      PUBLISH_PYPI_ARGS: "{{SECRET:[pypi][username]}} {{SECRET:[pypi][password]}}"
     template: pypi_package
