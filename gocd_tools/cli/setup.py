@@ -54,3 +54,11 @@ def setup_cli(parser):
         module_name="server",
         func_name="configure_server",
     )
+
+    server_cleanup_parser = server_commands.add_parser("cleanup")
+    server_cleanup_parser.set_defaults(
+        func=cli_exec,
+        module_path="gocd_tools.server",
+        module_name="server",
+        func_name="cleanup_server",
+    )

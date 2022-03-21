@@ -47,6 +47,14 @@ def get(session, url, *args, **kwargs):
     return None
 
 
+def delete(session, url, *args, **kwargs):
+    try:
+        return session.delete(url, *args, **kwargs)
+    except Exception as err:
+        print("Failed DELETE request: {}".format(err))
+    return None
+
+
 def post(session, url, *args, **kwargs):
     try:
         return session.post(url, *args, **kwargs)
@@ -83,6 +91,15 @@ def get_types(session, base_url, headers=None):
 def create_type(session, url, data=None, headers=None):
     json_data = json.dumps(data)
     created = post(session, url, data=json_data, headers=headers)
+    if created.status_code == 200:
+        return True
+    print("{}:{}".format(created.status_code, created.text))
+    return False
+
+
+def delete_type(session, base_url, id, headers=None):
+    id_url = "{}/{}".format(base_url, id)
+    created = delete(session, id_url, headers=headers)
     if created.status_code == 200:
         return True
     print("{}:{}".format(created.status_code, created.text))
@@ -258,6 +275,23 @@ def setup(session, configs, url, headers, identifer_variable="id"):
     return True, {}
 
 
+def remove(session, configs, url, headers, identifier_variable="id"):
+    response = {}
+    for config in configs:
+        resp_headers, exists = get_type(
+            session, url, config[identifier_variable], headers=headers,
+        )
+        if exists:
+            print("Removing: {}".format(config[identifier_variable]))
+            deleted = delete_type(
+                session, url, config[identifier_variable], headers=headers
+            )
+            if not deleted:
+                response["msg"] = "Failed to remove: {}".format(config)
+                return False, response
+    return True, {}
+
+
 def setup_config_repositories(session, configs, url, headers):
     response = {}
     for repository_config in configs:
@@ -419,9 +453,84 @@ def configure_server():
             )
         return True, response
 
+    return None, response
+
 
 def cleanup_server():
-    pass
+    repositories_configs = load_config(path=repositories_path)
+    templates_configs = load_config(path=templates_path)
+    elastic_agent_configs = load_config(path=elastic_agent_profile_path)
+    cluster_profiles_configs = load_config(path=cluster_profiles_path)
+    secret_managers_configs = load_config(path=secret_managers_config_path)
+    roles_configs = load_config(path=roles_path)
+
+    response = {}
+    with requests.Session() as session:
+        print("Authenticate")
+        authed = authenticate(session)
+        if not authed:
+            response["msg"] = "Failed to authenticate against: {}".format(
+                GITHUB_GOCD_AUTH_URL
+            )
+            return False, response
+
+        print("Delete Config Repositories")
+        success, response = remove(
+            session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4
+        )
+        if not success:
+            return False, response
+
+        print("Delete Template Configs")
+        success, response = remove(
+            session,
+            templates_configs,
+            TEMPLATE_URL,
+            ACCEPT_HEADER_7,
+            identifier_variable="name",
+        )
+        if not success:
+            return False, response
+
+        print("Delete Elastic Agent Configs")
+        success, response = remove(
+            session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
+        )
+        if not success:
+            return False, response
+
+        print("Delete Cluster Profiles")
+        success, response = remove(
+            session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
+        )
+        if not success:
+            return False, response
+
+        print("Delete Secret Managers")
+        success, response = remove(
+            session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
+        )
+        if not success:
+            return False, response
+
+        print("Delete Roles")
+        success, response = remove(
+            session,
+            roles_configs,
+            ROLE_URL,
+            ACCEPT_HEADER_3,
+            identifier_variable="name",
+        )
+        if not success:
+            return False, response
+
+        if "msg" not in response:
+            response["msg"] = "Succesfully finished the cleanup of endpoint: {}".format(
+                GOCD_BASE_URL
+            )
+        return True, response
+
+    return None, response
 
 
 if __name__ == "__main__":
