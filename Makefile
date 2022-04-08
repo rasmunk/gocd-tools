@@ -29,7 +29,7 @@ dist:
 	$(VENV)/python setup.py sdist bdist_wheel
 
 distclean:
-	rm -fr dist build ${PACKAGE_NAME}.egg-info
+	rm -fr dist build $(PACKAGE_NAME).egg-info
 
 maintainer-clean:
 	@echo 'This command is intended for maintainers to use; it'
