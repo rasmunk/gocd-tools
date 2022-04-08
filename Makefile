@@ -1,14 +1,21 @@
 PACKAGE_NAME=gocd-tools
 PACKAGE_NAME_FORMATTED=$(subst -,_,$(PACKAGE_NAME))
 OWNER=ucphhpc
-IMAGE=gocd-tools
+IMAGE=$(PACKAGE_NAME)
 TAG=edge
 ARGS=
 
-.PHONY: dockerbuild dockerclean dockerpush clean dist distclean maintainer-clean
+.PHONY: all init dockerbuild dockerclean dockerpush clean dist distclean maintainer-clean
 .PHONY: install uninstall installcheck check
 
-all: venv install-dep dockerbuild
+all: venv install-dep init dockerbuild
+
+init:
+ifeq ($(shell test -e defaults.env && echo yes), yes)
+ifneq ($(shell test -e .env && echo yes), yes)
+		ln -s defaults.env .env
+endif
+endif
 
 dockerbuild:
 	docker build -t $(OWNER)/$(IMAGE):$(TAG) $(ARGS) .
@@ -23,6 +30,7 @@ clean:
 	$(MAKE) dockerclean
 	$(MAKE) distclean
 	$(MAKE) venv-clean
+	rm -fr .env
 	rm -fr .pytest_cache
 	rm -fr tests/__pycache__
 
