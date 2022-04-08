@@ -1,7 +1,6 @@
 VENV_NAME=venv
 VENV=$(VENV_NAME)/bin
 ACTIVATE_FILE=$(VENV)/activate
-PYTHON=$(VENV)/python3
 
 #
 # Interactive shells
@@ -43,7 +42,23 @@ endif
 endif
 
 ifndef PY
-_PY_OPTION:=$(VENVDIR)/bin/python
+_PY_OPTION:=$(VENV_NAME)/bin/python
+ifeq (ok,$(shell $(_PY_OPTION) -c "print('ok')" $(NULL_STDERR)))
+PY=$(_PY_OPTION)
+$(info $(_PY_AUTODETECT_MSG))
+endif
+endif
+
+ifndef PY
+_PY_OPTION:=$(subst /,\,$(VENV_NAME)/Scripts/python)
+ifeq (ok,$(shell $(_PY_OPTION) -c "print('ok')" $(NULL_STDERR)))
+PY=$(_PY_OPTION)
+$(info $(_PY_AUTODETECT_MSG))
+endif
+endif
+
+ifndef PY
+_PY_OPTION:=py -3
 ifeq (ok,$(shell $(_PY_OPTION) -c "print('ok')" $(NULL_STDERR)))
 PY=$(_PY_OPTION)
 $(info $(_PY_AUTODETECT_MSG))
