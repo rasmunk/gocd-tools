@@ -55,6 +55,10 @@ CONFIG_REPO_URL = "{}/config_repos".format(ADMIN_URL)
 TEMPLATE_URL = "{}/templates".format(ADMIN_URL)
 SECRET_CONFIG_URL = "{}/secret_configs".format(ADMIN_URL)
 
+# Server config
+CONFIG_SERVER = "{}/config/server".format(ADMIN_URL)
+ARTIFACTS_CONFIG = "{}/artifact_config".format(CONFIG_SERVER)
+
 if "GOCD_AUTH_TOKEN" in os.environ:
     GOCD_AUTH_TOKEN = os.environ["GOCD_AUTH_TOKEN"]
     # The GOCD_AUTH_TOKEN is the one generate within the GOCD server
@@ -102,6 +106,7 @@ ENV_GO_PLUGIN_DIR = "GO_PLUGIN_DIR"
 default_base_path = GO_CONFIG_DIR
 default_config_path = os.path.join(default_base_path, "config")
 
+artifacts_config_path = os.path.join(default_config_path, "artifacts_config.yml")
 cluster_profiles_path = os.path.join(default_config_path, "cluster_profiles.yml")
 elastic_agent_profile_path = os.path.join(
     default_config_path, "elastic_agent_profiles.yml"

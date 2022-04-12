@@ -2,6 +2,7 @@ import requests
 import json
 from gocd_tools.defaults import (
     authorization_config_path,
+    artifacts_config_path,
     cluster_profiles_path,
     elastic_agent_profile_path,
     pipeline_group_configs_path,
@@ -28,6 +29,7 @@ from gocd_tools.defaults import (
     PIPELINE_GROUPS_URL,
     ROLE_URL,
     CONFIG_REPO_URL,
+    ARTIFACTS_CONFIG,
     TEMPLATE_URL,
 )
 from gocd_tools.config import load_config
@@ -352,6 +354,7 @@ def setup_config_repositories(session, configs, url, headers):
 
 def configure_server():
     authorization_configs = load_config(path=authorization_config_path)
+    artifacts_config = load_config(path=artifacts_config_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     pipeline_group_configs = load_config(path=pipeline_group_configs_path)
@@ -363,6 +366,7 @@ def configure_server():
 
     configs = [
         {"path": authorization_config_path, "config": authorization_configs},
+        {"path": artifacts_config_path, "config": artifacts_config},
         {"path": cluster_profiles_path, "config": cluster_profiles_configs},
         {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
         {"path": pipeline_group_configs_path, "config": pipeline_group_configs},
@@ -409,6 +413,13 @@ def configure_server():
             response["msg"] = "Failed to authenticate against: {}".format(
                 GITHUB_GOCD_AUTH_URL
             )
+            return False, response
+
+        print("Setup Artifacts Config")
+        success, response = setup(
+            session, artifacts_config, ARTIFACTS_CONFIG, ACCEPT_HEADER_1
+        )
+        if not success:
             return False, response
 
         print("Setup Secret Managers")
@@ -478,6 +489,7 @@ def cleanup_server():
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     secret_managers_configs = load_config(path=secret_managers_config_path)
+    artifacts_config = load_config(path=artifacts_config_path)
     roles_configs = load_config(path=roles_path)
 
     response = {}
@@ -536,6 +548,13 @@ def cleanup_server():
         print("Delete Secret Managers")
         success, response = remove(
             session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
+        )
+        if not success:
+            return False, response
+
+        print("Delete Artifacts Config")
+        success, response = remove(
+            session, artifacts_config, ARTIFACTS_CONFIG, ACCEPT_HEADER_1
         )
         if not success:
             return False, response
