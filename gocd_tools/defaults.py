@@ -106,8 +106,8 @@ cluster_profiles_path = os.path.join(default_config_path, "cluster_profiles.yml"
 elastic_agent_profile_path = os.path.join(
     default_config_path, "elastic_agent_profiles.yml"
 )
-pipeline_config_groups_path = os.path.join(
-    default_config_path, "pipeline_config_groups.yml"
+pipeline_group_configs_path = os.path.join(
+    default_config_path, "pipeline_group_configs.yml"
 )
 repositories_path = os.path.join(default_config_path, "repositories.yml")
 roles_path = os.path.join(default_config_path, "roles.yml")
