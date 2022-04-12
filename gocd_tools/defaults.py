@@ -50,6 +50,7 @@ ROLE_URL = "{}/roles".format(SECURITY_URL)
 # Restricted URLs
 AUTHORIZATION_CONFIG_URL = "{}/auth_configs".format(SECURITY_URL)
 CLUSTER_PROFILES_URL = "{}/elastic/cluster_profiles".format(ADMIN_URL)
+PIPELINE_GROUPS_URL = "{}/pipeline_groups".format(ADMIN_URL)
 CONFIG_REPO_URL = "{}/config_repos".format(ADMIN_URL)
 TEMPLATE_URL = "{}/templates".format(ADMIN_URL)
 SECRET_CONFIG_URL = "{}/secret_configs".format(ADMIN_URL)
@@ -104,6 +105,9 @@ default_config_path = os.path.join(default_base_path, "config")
 cluster_profiles_path = os.path.join(default_config_path, "cluster_profiles.yml")
 elastic_agent_profile_path = os.path.join(
     default_config_path, "elastic_agent_profiles.yml"
+)
+pipeline_config_groups_path = os.path.join(
+    default_config_path, "pipeline_config_groups.yml"
 )
 repositories_path = os.path.join(default_config_path, "repositories.yml")
 roles_path = os.path.join(default_config_path, "roles.yml")

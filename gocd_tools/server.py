@@ -4,6 +4,7 @@ from gocd_tools.defaults import (
     authorization_config_path,
     cluster_profiles_path,
     elastic_agent_profile_path,
+    pipeline_config_groups_path,
     repositories_path,
     roles_path,
     templates_path,
@@ -24,6 +25,7 @@ from gocd_tools.defaults import (
     AUTHORIZATION_CONFIG_URL,
     CLUSTER_PROFILES_URL,
     ELASTIC_AGENT_URL,
+    PIPELINE_GROUPS_URL,
     ROLE_URL,
     CONFIG_REPO_URL,
     TEMPLATE_URL,
@@ -352,6 +354,7 @@ def configure_server():
     authorization_configs = load_config(path=authorization_config_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
+    pipeline_config_groups = load_config(path=pipeline_config_groups_path)
     repositories_configs = load_config(path=repositories_path)
     roles_configs = load_config(path=roles_path)
     templates_configs = load_config(path=templates_path)
@@ -362,6 +365,7 @@ def configure_server():
         {"path": authorization_config_path, "config": authorization_configs},
         {"path": cluster_profiles_path, "config": cluster_profiles_configs},
         {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
+        {"path": pipeline_config_groups_path, "config": pipeline_config_groups},
         {"path": repositories_path, "config": repositories_configs},
         {"path": roles_path, "config": roles_configs},
         {"path": templates_path, "config": templates_configs},
@@ -424,6 +428,17 @@ def configure_server():
         print("Setup Elastic Agent Configs")
         success, response = setup(
             session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
+        )
+        if not success:
+            return False, response
+
+        print("Setup Pipeline Config Groups")
+        success, response = setup(
+            session,
+            pipeline_config_groups,
+            PIPELINE_GROUPS_URL,
+            ACCEPT_HEADER_1,
+            identifer_variable="name",
         )
         if not success:
             return False, response
