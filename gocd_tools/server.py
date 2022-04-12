@@ -474,6 +474,7 @@ def configure_server():
 def cleanup_server():
     repositories_configs = load_config(path=repositories_path)
     templates_configs = load_config(path=templates_path)
+    pipeline_group_configs = load_config(path=pipeline_group_configs_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     secret_managers_configs = load_config(path=secret_managers_config_path)
@@ -502,6 +503,17 @@ def cleanup_server():
             templates_configs,
             TEMPLATE_URL,
             ACCEPT_HEADER_7,
+            identifier_variable="name",
+        )
+        if not success:
+            return False, response
+
+        print("Delete Pipeline Config Groups")
+        success, response = remove(
+            session,
+            pipeline_group_configs,
+            PIPELINE_GROUPS_URL,
+            ACCEPT_HEADER_1,
             identifier_variable="name",
         )
         if not success:
