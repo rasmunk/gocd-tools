@@ -56,6 +56,9 @@ uninstall:
 	$(VENV)/pip uninstall -y -r requirements.txt
 	$(VENV)/pip uninstall -y -r $(PACKAGE_NAME)
 
+uninstallcheck:
+	$(VENV)/pip uninstall -r tests/requirements.txt
+
 installcheck:
 	$(VENV)/pip install -r tests/requirements.txt
 
