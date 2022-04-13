@@ -3,6 +3,7 @@ gocd-tools
 ==========
 
 A tool for automating the configuration of a `GoCD <https://www.gocd.org>`_ server.
+
 It achieves this by utilizing the published `GoCD API <https://api.gocd.org/current/#introduction>`_ specification.
 
 ---------------
@@ -42,7 +43,7 @@ Support
 
 Currently, the tool supports configuring the follow aspects.
 
-    * `Aritifacts Config <https://api.gocd.org/current/#artifacts-config>`_
+    * `Artifacts Config <https://api.gocd.org/current/#artifacts-config>`_
     * `Cluster Profiles <https://api.gocd.org/current/#cluster-profiles>`_
     * `Config Repo <https://api.gocd.org/current/#config-repo>`_
     * `Elastic Agent Profiles <https://api.gocd.org/current/#elastic-agent-profiles>`_
@@ -56,6 +57,7 @@ Configuration
 -------------
 
 The ``gocd-tools`` configures the targeted GoCD server via YAML config files.
+
 These configuration files are by default expected to be located in the current user's ``~/.gocd-tools/config`` directory.
 
 
@@ -70,6 +72,7 @@ These configuration files are by default expected to be located in the current u
 
 To specify which server should be configured, and how the tool should authenticate against that server the tool currently relies on environment variables.
 Namely the ``GOCD_BASE_URL`` and the ``GOCD_AUTH_TOKEN`` environment variables.
+
 Therefore they should be set in the current shell before the targeted server is attempted to be configured::
 
     export GOCD_BASE_URL=https://url-to-the-gocd-server
