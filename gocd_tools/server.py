@@ -516,7 +516,6 @@ def cleanup_server():
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     secret_managers_configs = load_config(path=secret_managers_config_path)
-    artifacts_config = load_config(path=artifacts_config_path)
     roles_configs = load_config(path=roles_path)
 
     response = {}
@@ -575,13 +574,6 @@ def cleanup_server():
         print("Delete Secret Managers")
         success, response = remove_configs(
             session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
-        )
-        if not success:
-            return False, response
-
-        print("Delete Artifacts Config")
-        success, response = remove_config(
-            session, artifacts_config, ARTIFACTS_CONFIG, ACCEPT_HEADER_1
         )
         if not success:
             return False, response
