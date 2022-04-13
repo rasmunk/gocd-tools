@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# coding: utf-8
 import os
 from setuptools import setup, find_packages
 
@@ -32,7 +30,7 @@ setup(
     packages=find_packages(),
     url="https://github.com/rasmunk/gocd-tools",
     license="MIT",
-    keywords=["GOCD", "CI", "CD"],
+    keywords=["GoCD", "CI", "CD"],
     install_requires=read_req("requirements.txt"),
     extras_require={"dev": read_req("requirements-dev.txt")},
     entry_points={"console_scripts": ["gocd-tools = gocd_tools.cli.cli:run"]},
