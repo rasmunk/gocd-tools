@@ -10,10 +10,7 @@ from gocd_tools.defaults import (
     roles_path,
     templates_path,
     secret_managers_config_path,
-    GOCD_AUTH_TOKEN,
-    GITHUB_AUTH_URL,
     GITHUB_GOCD_AUTH_URL,
-    GITHUB_AUTHORIZATION_HEADER,
     ACCEPT_HEADER_1,
     ACCEPT_HEADER_2,
     ACCEPT_HEADER_3,
@@ -29,7 +26,7 @@ from gocd_tools.defaults import (
     PIPELINE_GROUPS_URL,
     ROLE_URL,
     CONFIG_REPO_URL,
-    ARTIFACTS_CONFIG,
+    ARTIFACT_CONFIG,
     TEMPLATE_URL,
 )
 from gocd_tools.config import load_config
@@ -110,73 +107,77 @@ def delete_type(session, base_url, id, headers=None):
     return False
 
 
-def update_type(session, base_url, id, data=None, headers=None):
-    id_url = "{}/{}".format(base_url, id)
+def update(session, url, data=None, headers=None):
     json_data = json.dumps(data)
-    updated = put(session, id_url, data=json_data, headers=headers)
+    updated = put(session, url, data=json_data, headers=headers)
     if updated.status_code == 200 or updated.status_code == 201:
         return True
     print("Failed to update type: {}:{}".format(updated.status_code, updated.text))
     return False
 
 
-def authenticate_github(session):
-    if GOCD_AUTH_TOKEN == "":
-        print(
-            "The required environment variable GOCD_AUTH_TOKEN was empty: {}".format(
-                GOCD_AUTH_TOKEN
-            )
-        )
-        return False
-
-    # Login to regular github
-    github_auth = get(session, GITHUB_AUTH_URL, headers=GITHUB_AUTHORIZATION_HEADER)
-    if github_auth.status_code != 200:
-        print(
-            "Failed to authenticate with GitHub: {} - {}".format(
-                github_auth.status_code, github_auth.text
-            )
-        )
-        return False
-
-    redirect_location = get(
-        session,
-        GITHUB_GOCD_AUTH_URL,
-        allow_redirects=False,
-        headers=GITHUB_AUTHORIZATION_HEADER,
-    )
-    if not redirect_location.status_code == 302:
-        print(
-            "Failed to get the GitHub auth location: {} - {}".format(
-                redirect_location.status_code, redirect_location.text
-            )
-        )
-        return False
-
-    if "location" not in redirect_location.headers:
-        print(
-            "Location not available in the GitHUB auth response: {}".format(
-                redirect_location.headers
-            )
-        )
-        return False
-
-    # Get the URL location for the GitHub auth page.
-    # TODO, the location_url does not properly authorize
-    # the session with the existing github authentication.
-    # Potentially lookinto a library option like
-    # https://requests-oauthlib.readthedocs.io/en/latest/oauth2_workflow.html
-    # location_url = redirect_location.headers["location"]
-    # github_resp = get(
-    #    session, location_url, allow_redirects=False
-    # )
-    #    if not github_resp.status_code == 200:
-    #        return False
-    #    return True
-    return False
+def update_type(session, base_url, id, data=None, headers=None):
+    id_url = "{}/{}".format(base_url, id)
+    return update(session, id_url, data=data, headers=headers)
 
 
-def authenticate(session, allow_redirects=False, **auth_kwargs):
+# def authenticate_github(session):
+#     if GOCD_AUTH_TOKEN == "":
+#         print(
+#             "The required environment variable GOCD_AUTH_TOKEN was empty: {}".format(
+#                 GOCD_AUTH_TOKEN
+#             )
+#         )
+#         return False
+
+#     # Login to regular github
+#     github_auth = get(session, GITHUB_AUTH_URL, headers=GITHUB_AUTHORIZATION_HEADER)
+#     if github_auth.status_code != 200:
+#         print(
+#             "Failed to authenticate with GitHub: {} - {}".format(
+#                 github_auth.status_code, github_auth.text
+#             )
+#         )
+#         return False
+
+#     redirect_location = get(
+#         session,
+#         GITHUB_GOCD_AUTH_URL,
+#         allow_redirects=False,
+#         headers=GITHUB_AUTHORIZATION_HEADER,
+#     )
+#     if not redirect_location.status_code == 302:
+#         print(
+#             "Failed to get the GitHub auth location: {} - {}".format(
+#                 redirect_location.status_code, redirect_location.text
+#             )
+#         )
+#         return False
+
+#     if "location" not in redirect_location.headers:
+#         print(
+#             "Location not available in the GitHUB auth response: {}".format(
+#                 redirect_location.headers
+#             )
+#         )
+#         return False
+
+#     # Get the URL location for the GitHub auth page.
+#     # TODO, the location_url does not properly authorize
+#     # the session with the existing github authentication.
+#     # Potentially lookinto a library option like
+#     # https://requests-oauthlib.readthedocs.io/en/latest/oauth2_workflow.html
+#     # location_url = redirect_location.headers["location"]
+#     # github_resp = get(
+#     #    session, location_url, allow_redirects=False
+#     # )
+#     #    if not github_resp.status_code == 200:
+#     #        return False
+#     #    return True
+#     return False
+
+
+def authenticate(session, **auth_kwargs):
     resp = get(session, AUTH_URL, headers=AUTHORIZATION_HEADER, **auth_kwargs)
     if resp.status_code == 200:
         return True
@@ -218,6 +219,13 @@ def get_secret_manager(session, id):
     return get_type(session, SECRET_CONFIG_URL, id, headers=ACCEPT_HEADER_3)
 
 
+def get_aritifacts_config(session, url, headers):
+    resp = get(session, url, headers=headers)
+    if resp.status_code == 200:
+        return resp.headers, resp.text
+    return None, None
+
+
 def init_server():
     """As the first thing, the server's authorization config
     is defined.
@@ -249,6 +257,26 @@ def init_server():
     response["msg"] = "The Authorization config for: {} was completed".format(
         GOCD_BASE_URL
     )
+    return True, response
+
+
+def update_artifacts_config(session, config, url, headers):
+    response = {}
+    resp_headers, exists = get_aritifacts_config(session, url, headers)
+    if not exists:
+        response["msg"] = "Failed to find artifacts config to update"
+        return False, response
+
+    update_headers = {"If-Match": resp_headers["ETag"], **headers}
+    updated = update(
+        session,
+        url,
+        data=config,
+        headers=update_headers,
+    )
+    if not updated:
+        response["msg"] = "Failed to update: {}".format(config)
+        return False, response
     return True, response
 
 
@@ -442,63 +470,70 @@ def configure_server():
             )
             return False, response
 
-        print("Setup Artifacts Config")
-        success, response = setup_config(
-            session, artifacts_config, ARTIFACTS_CONFIG, ACCEPT_HEADER_1
-        )
-        if not success:
-            return False, response
+        if artifacts_config:
+            print("Setup Artifacts Config")
+            success, response = update_artifacts_config(
+                session, artifacts_config, ARTIFACT_CONFIG, ACCEPT_HEADER_1
+            )
+            if not success:
+                return False, response
 
-        print("Setup Secret Managers")
-        success, response = setup_configs(
-            session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
-        )
-        if not success:
-            return False, response
+        if secret_managers_configs:
+            print("Setup Secret Managers")
+            success, response = setup_configs(
+                session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
+            )
+            if not success:
+                return False, response
 
-        print("Setup Cluster Profiles")
-        success, response = setup_configs(
-            session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
-        )
-        if not success:
-            return False, response
+        if cluster_profiles_configs:
+            print("Setup Cluster Profiles")
+            success, response = setup_configs(
+                session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
+            )
+            if not success:
+                return False, response
 
-        print("Setup Elastic Agent Configs")
-        success, response = setup_configs(
-            session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
-        )
-        if not success:
-            return False, response
+        if elastic_agent_configs:
+            print("Setup Elastic Agent Configs")
+            success, response = setup_configs(
+                session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
+            )
+            if not success:
+                return False, response
 
-        print("Setup Pipeline Group Configs")
-        success, response = setup_configs(
-            session,
-            pipeline_group_configs,
-            PIPELINE_GROUPS_URL,
-            ACCEPT_HEADER_1,
-            identifer_variable="name",
-        )
-        if not success:
-            return False, response
+        if pipeline_group_configs:
+            print("Setup Pipeline Group Configs")
+            success, response = setup_configs(
+                session,
+                pipeline_group_configs,
+                PIPELINE_GROUPS_URL,
+                ACCEPT_HEADER_1,
+                identifer_variable="name",
+            )
+            if not success:
+                return False, response
 
-        print("Create Template Configs")
-        success, response = setup_configs(
-            session,
-            templates_configs,
-            TEMPLATE_URL,
-            ACCEPT_HEADER_7,
-            identifer_variable="name",
-        )
-        if not success:
-            return False, response
+        if templates_configs:
+            print("Create Template Configs")
+            success, response = setup_configs(
+                session,
+                templates_configs,
+                TEMPLATE_URL,
+                ACCEPT_HEADER_7,
+                identifer_variable="name",
+            )
+            if not success:
+                return False, response
 
-        print("Create Config Repositories")
-        success, response = setup_config_repositories(
-            session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4
-        )
+        if repositories_configs:
+            print("Create Config Repositories")
+            success, response = setup_config_repositories(
+                session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4
+            )
 
-        if not success:
-            return False, response
+            if not success:
+                return False, response
 
         if "msg" not in response:
             response["msg"] = "Succesfully configured the {} endpoint".format(
@@ -528,73 +563,79 @@ def cleanup_server():
             )
             return False, response
 
-        print("Delete Config Repositories")
-        success, response = remove_configs(
-            session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4
-        )
-        if not success:
-            return False, response
+        if repositories_configs:
+            print("Delete Config Repositories")
+            success, response = remove_configs(
+                session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4
+            )
+            if not success:
+                return False, response
 
-        print("Delete Template Configs")
-        success, response = remove_configs(
-            session,
-            templates_configs,
-            TEMPLATE_URL,
-            ACCEPT_HEADER_7,
-            identifier_variable="name",
-        )
-        if not success:
-            return False, response
+        if templates_configs:
+            print("Delete Template Configs")
+            success, response = remove_configs(
+                session,
+                templates_configs,
+                TEMPLATE_URL,
+                ACCEPT_HEADER_7,
+                identifier_variable="name",
+            )
+            if not success:
+                return False, response
 
-        print("Delete Pipeline Config Groups")
-        success, response = remove_configs(
-            session,
-            pipeline_group_configs,
-            PIPELINE_GROUPS_URL,
-            ACCEPT_HEADER_1,
-            identifier_variable="name",
-        )
-        if not success:
-            return False, response
+        if pipeline_group_configs:
+            print("Delete Pipeline Config Groups")
+            success, response = remove_configs(
+                session,
+                pipeline_group_configs,
+                PIPELINE_GROUPS_URL,
+                ACCEPT_HEADER_1,
+                identifier_variable="name",
+            )
+            if not success:
+                return False, response
 
-        print("Delete Elastic Agent Configs")
-        success, response = remove_configs(
-            session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
-        )
-        if not success:
-            return False, response
+        if elastic_agent_configs:
+            print("Delete Elastic Agent Configs")
+            success, response = remove_configs(
+                session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
+            )
+            if not success:
+                return False, response
 
-        print("Delete Cluster Profiles")
-        success, response = remove_configs(
-            session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
-        )
-        if not success:
-            return False, response
+        if cluster_profiles_configs:
+            print("Delete Cluster Profiles")
+            success, response = remove_configs(
+                session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
+            )
+            if not success:
+                return False, response
 
-        print("Delete Secret Managers")
-        success, response = remove_configs(
-            session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
-        )
-        if not success:
-            return False, response
+        if secret_managers_configs:
+            print("Delete Secret Managers")
+            success, response = remove_configs(
+                session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
+            )
+            if not success:
+                return False, response
 
-        print("Delete Roles")
-        success, response = remove_configs(
-            session,
-            roles_configs,
-            ROLE_URL,
-            ACCEPT_HEADER_3,
-            identifier_variable="name",
-        )
-        if not success:
-            return False, response
+        if roles_configs:
+            print("Delete Roles")
+            success, response = remove_configs(
+                session,
+                roles_configs,
+                ROLE_URL,
+                ACCEPT_HEADER_3,
+                identifier_variable="name",
+            )
+            if not success:
+                return False, response
 
         if "msg" not in response:
             response["msg"] = "Succesfully finished the cleanup of endpoint: {}".format(
                 GOCD_BASE_URL
             )
         return True, response
-
     return None, response
 
 

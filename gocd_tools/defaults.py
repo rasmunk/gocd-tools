@@ -57,7 +57,7 @@ SECRET_CONFIG_URL = "{}/secret_configs".format(ADMIN_URL)
 
 # Server config
 CONFIG_SERVER = "{}/config/server".format(ADMIN_URL)
-ARTIFACTS_CONFIG = "{}/artifact_config".format(CONFIG_SERVER)
+ARTIFACT_CONFIG = "{}/artifact_config".format(CONFIG_SERVER)
 
 if "GOCD_AUTH_TOKEN" in os.environ:
     GOCD_AUTH_TOKEN = os.environ["GOCD_AUTH_TOKEN"]

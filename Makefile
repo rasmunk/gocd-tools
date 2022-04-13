@@ -32,6 +32,7 @@ clean:
 	$(MAKE) venv-clean
 	rm -fr .env
 	rm -fr .pytest_cache
+	rm -fr gocd_tools/__pycache__
 	rm -fr tests/__pycache__
 
 dist:
