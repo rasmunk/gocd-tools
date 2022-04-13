@@ -113,3 +113,39 @@ Thereby, the supported commands can be discovered through the defined CLI, for e
 
     COMMAND:
     {init,configure,cleanup}
+
+
+For instance, to configure and subsequent cleanup a server, the following commands should be used::
+
+    $ gocd-tools setup server init
+    Init server: https://url-to-the-gocd-server
+    Failed to find: 401:{
+    "message": "You are not authenticated!"
+    }
+    {
+        "msg": "The Authorization config for: https://ci.erda.dk was completed",
+        "status": "success"
+    }
+
+    $ gocd-tools setup server configure
+    Authenticate
+    Setup Roles
+    Failed to find: 404:{"message":"Role with name \u0027manager\u0027 was not found!"}
+    Creating: manager
+    ...
+    {
+        "msg": "Succesfully configured the https://url-to-the-gocd-server endpoint",
+        "status": "success"
+    }
+
+    $ gocd-tools setup server cleanup
+    Authenticate
+    Delete Config Repositories
+    ...
+    Delete Roles
+    Removing: manager
+    {
+        "msg": "Succesfully finished the cleanup of endpoint: https://url-to-the-gocd-server",
+        "status": "success"
+    }
+
