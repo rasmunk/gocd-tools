@@ -219,7 +219,7 @@ def get_secret_manager(session, id):
 
 
 def init_server():
-    """ As the first thing, the server's authorization config
+    """As the first thing, the server's authorization config
     is defined.
     """
     print("Init server: {}".format(GOCD_BASE_URL))
@@ -252,47 +252,71 @@ def init_server():
     return True, response
 
 
-def setup(session, configs, url, headers, identifer_variable="id"):
+def setup_config(session, config, url, headers, identifer_variable="id"):
     response = {}
-    for config in configs:
-        resp_headers, exists = get_type(
-            session, url, config[identifer_variable], headers=headers,
+    resp_headers, exists = get_type(
+        session,
+        url,
+        config[identifer_variable],
+        headers=headers,
+    )
+    if not exists:
+        print("Creating: {}".format(config[identifer_variable]))
+        created = create_type(session, url, data=config, headers=headers)
+        if not created:
+            response["msg"] = "Failed to create: {}".format(config)
+            return False, response
+    else:
+        update_headers = {"If-Match": resp_headers["ETag"], **headers}
+        updated = update_type(
+            session,
+            url,
+            config[identifer_variable],
+            data=config,
+            headers=update_headers,
         )
-        if not exists:
-            print("Creating: {}".format(config[identifer_variable]))
-            created = create_type(session, url, data=config, headers=headers)
-            if not created:
-                response["msg"] = "Failed to create: {}".format(config)
-                return False, response
-        else:
-            update_headers = {"If-Match": resp_headers["ETag"], **headers}
-            updated = update_type(
-                session,
-                url,
-                config[identifer_variable],
-                data=config,
-                headers=update_headers,
-            )
-            if not updated:
-                response["msg"] = "Failed to update: {}".format(config)
-                return False, response
+        if not updated:
+            response["msg"] = "Failed to update: {}".format(config)
+            return False, response
+    return True, response
+
+
+def setup_configs(session, configs, url, headers, identifer_variable="id"):
+    for config in configs:
+        success, response = setup_config(
+            session, config, url, headers, identifer_variable=identifer_variable
+        )
+        if not success:
+            return False, response
     return True, {}
 
 
-def remove(session, configs, url, headers, identifier_variable="id"):
+def remove_config(session, config, url, headers, identifier_variable="id"):
     response = {}
-    for config in configs:
-        resp_headers, exists = get_type(
-            session, url, config[identifier_variable], headers=headers,
+    resp_headers, exists = get_type(
+        session,
+        url,
+        config[identifier_variable],
+        headers=headers,
+    )
+    if exists:
+        print("Removing: {}".format(config[identifier_variable]))
+        deleted = delete_type(
+            session, url, config[identifier_variable], headers=headers
         )
-        if exists:
-            print("Removing: {}".format(config[identifier_variable]))
-            deleted = delete_type(
-                session, url, config[identifier_variable], headers=headers
-            )
-            if not deleted:
-                response["msg"] = "Failed to remove: {}".format(config)
-                return False, response
+        if not deleted:
+            response["msg"] = "Failed to remove: {}".format(config)
+            return False, response
+    return True, response
+
+
+def remove_configs(session, configs, url, headers, identifier_variable="id"):
+    for config in configs:
+        success, response = remove_config(
+            session, config, url, headers, identifier_variable=identifier_variable
+        )
+        if not success:
+            return False, response
     return True, {}
 
 
@@ -300,7 +324,10 @@ def setup_config_repositories(session, configs, url, headers):
     response = {}
     for repository_config in configs:
         resp_headers, exists = get_type(
-            session, url, repository_config["id"], headers=headers,
+            session,
+            url,
+            repository_config["id"],
+            headers=headers,
         )
         if not exists:
             # Check whether a secret auth token is required
@@ -400,7 +427,7 @@ def configure_server():
             return False, response
 
         print("Setup Roles")
-        success, response = setup(
+        success, response = setup_configs(
             session, roles_configs, ROLE_URL, ACCEPT_HEADER_3, identifer_variable="name"
         )
         if not success:
@@ -416,35 +443,35 @@ def configure_server():
             return False, response
 
         print("Setup Artifacts Config")
-        success, response = setup(
+        success, response = setup_config(
             session, artifacts_config, ARTIFACTS_CONFIG, ACCEPT_HEADER_1
         )
         if not success:
             return False, response
 
         print("Setup Secret Managers")
-        success, response = setup(
+        success, response = setup_configs(
             session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
         )
         if not success:
             return False, response
 
         print("Setup Cluster Profiles")
-        success, response = setup(
+        success, response = setup_configs(
             session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
         )
         if not success:
             return False, response
 
         print("Setup Elastic Agent Configs")
-        success, response = setup(
+        success, response = setup_configs(
             session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
         )
         if not success:
             return False, response
 
         print("Setup Pipeline Group Configs")
-        success, response = setup(
+        success, response = setup_configs(
             session,
             pipeline_group_configs,
             PIPELINE_GROUPS_URL,
@@ -455,7 +482,7 @@ def configure_server():
             return False, response
 
         print("Create Template Configs")
-        success, response = setup(
+        success, response = setup_configs(
             session,
             templates_configs,
             TEMPLATE_URL,
@@ -503,14 +530,14 @@ def cleanup_server():
             return False, response
 
         print("Delete Config Repositories")
-        success, response = remove(
+        success, response = remove_configs(
             session, repositories_configs, CONFIG_REPO_URL, ACCEPT_HEADER_4
         )
         if not success:
             return False, response
 
         print("Delete Template Configs")
-        success, response = remove(
+        success, response = remove_configs(
             session,
             templates_configs,
             TEMPLATE_URL,
@@ -521,7 +548,7 @@ def cleanup_server():
             return False, response
 
         print("Delete Pipeline Config Groups")
-        success, response = remove(
+        success, response = remove_configs(
             session,
             pipeline_group_configs,
             PIPELINE_GROUPS_URL,
@@ -532,35 +559,35 @@ def cleanup_server():
             return False, response
 
         print("Delete Elastic Agent Configs")
-        success, response = remove(
+        success, response = remove_configs(
             session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
         )
         if not success:
             return False, response
 
         print("Delete Cluster Profiles")
-        success, response = remove(
+        success, response = remove_configs(
             session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
         )
         if not success:
             return False, response
 
         print("Delete Secret Managers")
-        success, response = remove(
+        success, response = remove_configs(
             session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
         )
         if not success:
             return False, response
 
         print("Delete Artifacts Config")
-        success, response = remove(
+        success, response = remove_config(
             session, artifacts_config, ARTIFACTS_CONFIG, ACCEPT_HEADER_1
         )
         if not success:
             return False, response
 
         print("Delete Roles")
-        success, response = remove(
+        success, response = remove_configs(
             session,
             roles_configs,
             ROLE_URL,
