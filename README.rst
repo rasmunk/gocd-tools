@@ -76,7 +76,8 @@ Namely the ``GOCD_BASE_URL`` and the ``GOCD_AUTH_TOKEN`` environment variables.
 Therefore they should be set in the current shell before the targeted server is attempted to be configured::
 
     export GOCD_BASE_URL=https://url-to-the-gocd-server
-    export GOCD_AUTH_TOKEN=`Your Personal Access Token <https://docs.gocd.org/current/configuration/access_tokens.html>`_
+    export GOCD_AUTH_TOKEN=Your Personal Access Token (https://docs.gocd.org/current/configuration/access_tokens.html)
+
 
 -----
 Usage
