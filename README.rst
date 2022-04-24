@@ -1,6 +1,12 @@
+.. |docsbadge| image:: https://readthedocs.org/projects/gocd-tools/badge/?version=latest
+    :target: https://gocd-tools.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+|docsbadge|
+
 ==========
 gocd-tools
 ==========
+
 
 A tool for automating the configuration of a `GoCD <https://www.gocd.org>`_ server.
 
