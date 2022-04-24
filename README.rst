@@ -115,6 +115,9 @@ Thereby, the supported commands can be discovered through the defined CLI, for e
     COMMAND:
     {init,configure,cleanup}
 
+--------------------
+Configuring a server
+--------------------
 
 For instance, to configure and subsequent cleanup a server, the following commands should be used::
 
@@ -138,6 +141,14 @@ For instance, to configure and subsequent cleanup a server, the following comman
         "msg": "Succesfully configured the https://url-to-the-gocd-server endpoint",
         "status": "success"
     }
+
+After the tool has printed the executed command was a success, you should have a server that is configured as defined in your config files
+
+----------------
+Cleanup a server
+----------------
+
+If you want to revert this configuration, you can used the `cleanup` argument. The `cleanup` argument will roll-back the configurations specfied in your config files inside your local configuration directory. It will therefore not remove configurations, such as additional pipelines that has been manually created on the GoCD site via its web interface::
 
     $ gocd-tools setup server cleanup
     Authenticate
