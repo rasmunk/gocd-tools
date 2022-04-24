@@ -58,7 +58,7 @@ Configuration
 
 The ``gocd-tools`` configures the targeted GoCD server via YAML config files.
 
-These configuration files are by default expected to be located in the current user's ``~/.gocd-tools/config`` directory.
+These configuration files are by default expected to be located in the current user's ``~/.gocd-tools/config`` directory and have the specific names used below.
 
 
     -rw-r--r--   1 user  staff    100 13 Apr 14:38 artifacts_config.yml
