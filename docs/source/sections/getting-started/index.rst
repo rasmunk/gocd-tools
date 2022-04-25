@@ -8,3 +8,4 @@ It is quite simple to get started with `gocd-tools`, you can find the steps requ
 
     prerequisites
     installation
+    uninstallation
