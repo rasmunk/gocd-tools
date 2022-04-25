@@ -11,7 +11,7 @@ This is achived by running the following command::
 
     # Best practice, create a seperate virtual environment
     python3 -m virtualenv venv
-    source venv
+    source venv/bin/activate
 
     # Install the requirements
     pip3 install -r requirements.txt

@@ -8,7 +8,7 @@ Welcome to gocd-tools's!
 
 Gocd-tools is a tool for automating several management tasks for the `GoCD <https://www.gocd.org>`_ server.
 This includes the configuration and cleanup of server configurations, including `Pipelines <https://docs.gocd.org/current/configuration/pipelines.html>`_, `Config Repositories <https://docs.gocd.org/current/advanced_usage/config_repo.html>`_, `Templates <https://docs.gocd.org/current/configuration/pipeline_templates.html>`_, and beyond.
-The total list of currently supported server configuration management can be seen in :ref:`supported types <sections/support/types>`:.
+The total list of currently supported server configuration management can be seen in `Supported Types`:.
 
 To get proper started, please have a look at the Gettings Started section.
 

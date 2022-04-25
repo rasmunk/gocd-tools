@@ -1,5 +1,5 @@
-Types
-=====
+Supported Types
+===============
 
 Which types the tool support, is defined by how many of the objects and operations in the `GoCD API <https://api.gocd.org/current/#introduction>`_ I have gotten around to implement. Currently, the tools supports configuring the following types.
 
