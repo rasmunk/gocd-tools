@@ -12,4 +12,4 @@ However this is not recommended, since it is not guranteed that this is stable e
     cd gocd-tools
     pip3 install .
 
-After either of these installation approaces has been applied, you should now be ready to configure the `gocd-tools`.
+After either of these installation approaces has been applied, you should now be ready to configure the ``gocd-tools``.

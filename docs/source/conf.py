@@ -1,11 +1,19 @@
 # Configuration file for the gocd-tools documentation site.
 import sphinx_rtd_theme
 
+# -- Path setup --------------------------------------------------------------
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath("../gocd_tools"))
+
+
 # -- Project information -----------------------------------------------------
 
 project = 'gocd-tools'
 copyright = '2022, Rasmus Munk'
 author = 'Rasmus Munk'
+release = '0.0.1a4'
 
 
 # -- General configuration ---------------------------------------------------
@@ -14,7 +22,9 @@ author = 'Rasmus Munk'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

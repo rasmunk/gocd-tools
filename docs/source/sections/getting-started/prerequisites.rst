@@ -13,13 +13,13 @@ Which `Authorization Configuration <https://docs.gocd.org/current/configuration/
 After this has been done, you should now be able to authenticate via the GoCD website. In this interface, as described by the
 GoCD documentation, you should be able to generate a `Access Token <https://docs.gocd.org/current/configuration/access_tokens.html>`_ for your user.
 
-Upon generating and saving the `Access Token <https://docs.gocd.org/current/configuration/access_tokens.html>`_, the `gocd-tools` expects that this value
+Upon generating and saving the `Access Token <https://docs.gocd.org/current/configuration/access_tokens.html>`_, the ``gocd-tools`` expects that this value
 is assigned to the ``GOCD_AUTH_TOKEN`` environment variable::
 
     export GOCD_AUTH_TOKEN="ACCESS_TOKEN"
 
-Secondly, the `gocd-tools` also requires that the ``GOCD_BASE_URL`` variable be set to the URL of the GoCD server::
+Secondly, the ``gocd-tools`` also requires that the ``GOCD_BASE_URL`` variable be set to the URL of the GoCD server::
 
     export GOCD_BASE_URL=https://gocd_server_url
 
-With these two prerequisites in place, the `gocd-tools` is now ready to be used to both be installed and used.
+With these two prerequisites in place, the ``gocd-tools`` is now ready to be used to both be installed and used.

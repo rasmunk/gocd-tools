@@ -1,5 +1,5 @@
-Configuration Files
-===================
+Files
+=====
 
 .. _target configuration files:
 

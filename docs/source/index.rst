@@ -13,6 +13,16 @@ The total list of currently supported server configuration management can be see
 To get proper started, please have a look at the Gettings Started section.
 
 .. toctree::
+   :maxdepth: 4
+   :caption: Python Documentation
+
+
+.. toctree::
+   :maxdepth: 4
+   :caption: User documentation
+
+
+.. toctree::
    :maxdepth: 2
 
    sections/getting-started/index
@@ -20,7 +30,7 @@ To get proper started, please have a look at the Gettings Started section.
 For information about how the tool can be configured, please have a look at the Configuration section.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    sections/configuration/index
 
@@ -31,7 +41,7 @@ Examples for how the tool can be used in different scenarios, check out the Usag
 
    sections/usage/index
 
-Information about how much of the GoCD server the `gocd-tools` currently support in terms of supported operations and types can be found in the support section below.
+Information about how much of the GoCD server the ``gocd-tools`` currently support in terms of supported operations and types can be found in the support section below.
 
 .. toctree::
    :maxdepth: 2
