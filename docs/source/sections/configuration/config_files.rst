@@ -14,6 +14,7 @@ The names of these files is related to the config operation it :ref:`GoCD Type t
 .. _Artifacts Config File:
 
 ``artifacts_config.yml``
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 This file contains the `Artifacts Config`_ configuration.
 The structure of this file is expected to abide by the format defined the GoCD API for an `Artifacts Config Object`_.
@@ -30,6 +31,7 @@ An example configuration of this could be::
 .. _Cluster Profiles File:
 
 ``cluster_profiles.yml``
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 This file contains the `Cluster Profiles`_ configurations.
 The structure of this file is expected to abid by the formated expected by the `Cluster Profile Object`_ format.
@@ -53,13 +55,14 @@ An example configuration of this could be::
 .. _Config Repo File:
 
 ``config_repositories.yml``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This file contains the `Config Repo`_ configurations.
 The structure of this file is three-fold. First the ``id`` key-value pair is used to set a unique identifer for the `Config Repo`_ in question.
 Second, then ``authentication`` section is used to define whether any form of authentication is required to access the designated `Config Repo`_.
 An example of this could be that the designated `Config Repo`_ is a private GitHub repository that requires authentication.
-To use ``authentication``, the ``gocd-tools`` expects it to be provided by a `Secret Config File`_ an example of this can be seen below. Thirdly,
-the ``config`` section is passed directly as the `Config Repo`_ to be created.
+To use ``authentication``, the ``gocd-tools`` expects this to be provided by a `Secret Config`_, which an example of can be seen below in the `secret_configs.yml`_ section.
+Thirdly, the ``config`` section is passed directly as the `Config Repo`_ to be created.
 An example configuration of this could be::
 
   - id: gocd-tools
@@ -84,6 +87,7 @@ An example configuration of this could be::
 .. _Elastic Agent Profiles File:
 
 ``elastic_agent_profiles.yml``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This file contains the `Elastic Agent Profiles`_ configurations.
 The structure of this file is expected to abid by the formated expected by the `Elastic Agent Profile Object`_ format.
@@ -108,7 +112,8 @@ An example configuration of this could be::
 .. _Pipeline Group Config Object: https://api.gocd.org/current/#the-pipeline-group-object
 .. _Pipeline Group Config File:
 
-``pipeline_group_configs``
+``pipeline_group_configs.yml``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This file contains the `Pipeline Group Config`_ configurations.
 The structure of this file is expected to abid by the formated expected by the `Pipeline Group Config Object`_ format.
@@ -125,6 +130,7 @@ An example configuration of this could be::
 .. _Roles File:
 
 ``roles.yml``
+~~~~~~~~~~~~~
 
 This file contains the `Roles`_ configurations.
 The structure of this file is expected to abid by the formated expected by the `Roles Object`_ format.
@@ -149,6 +155,7 @@ An example configuration of this could be::
 .. _Secret Config File:
 
 ``secret_configs.yml``
+~~~~~~~~~~~~~~~~~~~~~~
 
 This file contains the `Secret Configs`_ configurations.
 The structure of this file is expected to abid by the formated expected by the `Secret Config Object`_ format.
@@ -172,6 +179,7 @@ An example configuration of this could be::
 .. _Template COnfig File:
 
 ``templates.yml``
+~~~~~~~~~~~~~~~~~
 
 This file contains the `Template Configs`_ configurations.
 The structure of this file is expected to abid by the formated expected by the `Template Config Object`_ format.
