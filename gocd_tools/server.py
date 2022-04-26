@@ -544,7 +544,7 @@ def configure_server():
     return None, response
 
 
-def cleanup_server():
+def wipe_server():
     repositories_configs = load_config(path=repositories_path)
     templates_configs = load_config(path=templates_path)
     pipeline_group_configs = load_config(path=pipeline_group_configs_path)
@@ -642,4 +642,4 @@ def cleanup_server():
 if __name__ == "__main__":
     init_server()
     configure_server()
-    cleanup_server()
+    wipe_server()
