@@ -61,7 +61,7 @@ This file contains the `Config Repo`_ configurations.
 The structure of this file is three-fold. First the ``id`` key-value pair is used to set a unique identifer for the `Config Repo`_ in question.
 Second, then ``authentication`` section is used to define whether any form of authentication is required to access the designated `Config Repo`_.
 An example of this could be that the designated `Config Repo`_ is a private GitHub repository that requires authentication.
-To use ``authentication``, the ``gocd-tools`` expects this to be provided by a `Secret Config`_, which an example of can be seen below in the `secret_configs.yml`_ section.
+To use ``authentication``, the ``gocd-tools`` expects this to be provided by a `Secret Config File`_, which an example of can be seen below in the `secret_configs.yml`_ section.
 Thirdly, the ``config`` section is passed directly as the `Config Repo`_ to be created.
 An example configuration of this could be::
 
@@ -113,7 +113,7 @@ An example configuration of this could be::
 .. _Pipeline Group Config File:
 
 ``pipeline_group_configs.yml``
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This file contains the `Pipeline Group Config`_ configurations.
 The structure of this file is expected to abid by the formated expected by the `Pipeline Group Config Object`_ format.

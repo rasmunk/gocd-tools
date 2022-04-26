@@ -28,4 +28,4 @@ So, we see what this ``setup`` command can provide us::
     {secrets,server}
 
 Next, we can see that the ``gocd-tools setup`` command can enable us to execute commands that are related to ``secrets`` and ``server``.
-To explore these commands in details about how they are used and what they can do for us. Continue reading in the :doc:`/sections/usage/gocd_setup_secrets` and :doc:`/sections/usage/gocd_setup_server` sections.
+To explore these commands in details about how they are used and what they can do for us. Continue reading in the :doc:`/user/usage/gocd_setup_secrets` and :doc:`/user/usage/gocd_setup_server` sections.

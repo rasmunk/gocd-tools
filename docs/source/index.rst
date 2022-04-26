@@ -10,47 +10,27 @@ Gocd-tools is a tool for automating several management tasks for the `GoCD <http
 This includes the configuration and cleanup of server configurations, including `Pipelines <https://docs.gocd.org/current/configuration/pipelines.html>`_, `Config Repositories <https://docs.gocd.org/current/advanced_usage/config_repo.html>`_, `Templates <https://docs.gocd.org/current/configuration/pipeline_templates.html>`_, and beyond.
 The total list of currently supported server configuration management can be seen in :ref:`Supported Types <target supported types>`.
 
-To get proper started, please have a look at the Gettings Started section.
+To get proper started, have a look at the :doc:`/user/getting-started/index` section. This will ensure that you get all the required 
+prerequisites prepared. Furthermore, additional information about the tool can be configured can be found in the :doc:`/user/configuration/index` section.
+
+For information about the level of GoCD server management the ``gocd-tools`` currently supports, see the :doc:`/user/support/index`.
+
+To getting help with how the tool CLI can be used, see the :doc:`/user/usage/index` section.
+
+Finally, the documentation for the backend Python implementation can be seen in the :doc:`/python/index` section.
+
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Python Documentation
-
-
-.. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: User documentation
 
+   user/getting-started/index
+   user/configuration/index
+   user/usage/index
+   user/support/index
 
 .. toctree::
    :maxdepth: 2
+   :caption: Python Documentation
 
-   sections/getting-started/index
-
-For information about how the tool can be configured, please have a look at the Configuration section.
-
-.. toctree::
-   :maxdepth: 3
-
-   sections/configuration/index
-
-Examples for how the tool can be used in different scenarios, check out the Usage section below.
-
-.. toctree::
-   :maxdepth: 2
-
-   sections/usage/index
-
-Information about how much of the GoCD server the ``gocd-tools`` currently support in terms of supported operations and types can be found in the support section below.
-
-.. toctree::
-   :maxdepth: 2
-
-   sections/support/index
-
-Also, a list of default values can be found in the defaults section.
-
-.. toctree::
-   :maxdepth: 2
-
-   sections/defaults/index
+   python/index

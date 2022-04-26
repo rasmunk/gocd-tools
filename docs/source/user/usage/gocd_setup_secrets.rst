@@ -12,12 +12,10 @@ The ``gocd-tools setup secrets`` command is used as indicated to setup secrets o
     COMMAND:
     {init,configure,del}
 
-
 ``init``
 
 This command initializes the directory where the GoCD secrets will be stored.
 This means that it will create the directory path if it doesn't already exist.
-
 
 
 ``configure``
