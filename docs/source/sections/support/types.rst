@@ -13,7 +13,3 @@ Which types the tool support, is defined by how many of the objects and operatio
     * `Roles <https://api.gocd.org/current/#roles>`_
     * `Secret Configs <https://api.gocd.org/current/#secret-configs>`_
     * `Template Config <https://api.gocd.org/current/#template-config>`_
-
-
-
-
