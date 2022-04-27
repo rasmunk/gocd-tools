@@ -1,7 +1,6 @@
-.. |docsbadge| image:: https://readthedocs.org/projects/gocd-tools/badge/?version=latest
+.. image:: https://readthedocs.org/projects/gocd-tools/badge/?version=latest
     :target: https://gocd-tools.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-|docsbadge|
 
 ==========
 gocd-tools
