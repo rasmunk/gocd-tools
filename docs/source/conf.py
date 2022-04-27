@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.abspath("../gocd_tools"))
 project = "gocd-tools"
 copyright = "2022, Rasmus Munk"
 author = "Rasmus Munk"
-release = "0.0.1a4"
+release = "0.0.1a6"
 
 
 # -- General configuration ---------------------------------------------------
