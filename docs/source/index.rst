@@ -14,7 +14,6 @@ To get proper started, have a look at the :doc:`/user/getting-started/index` sec
 prerequisites prepared. Furthermore, additional information about the tool can be configured can be found in the :doc:`/user/configuration/index` section.
 
 For information about the level of GoCD server management the ``gocd-tools`` currently supports, see the :doc:`/user/support/index`.
-
 Finally, help about how the Command Line Interface can be used can be found in the :doc:`/user/usage/index` section.
 
 .. toctree::
