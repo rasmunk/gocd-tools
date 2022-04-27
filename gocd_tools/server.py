@@ -250,9 +250,9 @@ def init_server():
                     headers=ACCEPT_HEADER_2,
                 )
                 if not created:
-                    response["msg"] = "Failed to create authorization config: {}".format(
-                        auth_config
-                    )
+                    response[
+                        "msg"
+                    ] = "Failed to create authorization config: {}".format(auth_config)
                     return False, response
     response["msg"] = "The Authorization config for: {} was completed".format(
         GOCD_BASE_URL
@@ -333,7 +333,9 @@ def remove_config(session, config, url, headers, identifier_variable="id"):
     )
     if exists:
         print("Removing: {}".format(config[identifier_variable]))
-        deleted = delete_type(session, url, config[identifier_variable], headers=headers)
+        deleted = delete_type(
+            session, url, config[identifier_variable], headers=headers
+        )
         if not deleted:
             response["msg"] = "Failed to remove: {}".format(config)
             return False, response
