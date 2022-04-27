@@ -107,18 +107,20 @@ default_base_path = GO_CONFIG_DIR
 default_config_path = os.path.join(default_base_path, "config")
 
 artifacts_config_path = os.path.join(default_config_path, "artifacts_config.yml")
+authorization_config_path = os.path.join(
+    default_config_path, "authorization_configuration.yml"
+)
 cluster_profiles_path = os.path.join(default_config_path, "cluster_profiles.yml")
+config_repositories_path = os.path.join(default_config_path, "config_repositories.yml")
 elastic_agent_profile_path = os.path.join(
     default_config_path, "elastic_agent_profiles.yml"
 )
 pipeline_group_configs_path = os.path.join(
     default_config_path, "pipeline_group_configs.yml"
 )
-repositories_path = os.path.join(default_config_path, "repositories.yml")
 roles_path = os.path.join(default_config_path, "roles.yml")
+secret_managers_config_path = os.path.join(default_config_path, "secret_configs.yml")
 templates_path = os.path.join(default_config_path, "templates.yml")
-authorization_config_path = os.path.join(default_config_path, "authorization.yml")
-secret_managers_config_path = os.path.join(default_config_path, "secret_managers.yml")
 
 
 # Datadir discover

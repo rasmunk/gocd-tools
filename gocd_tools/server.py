@@ -6,7 +6,7 @@ from gocd_tools.defaults import (
     cluster_profiles_path,
     elastic_agent_profile_path,
     pipeline_group_configs_path,
-    repositories_path,
+    config_repositories_path,
     roles_path,
     templates_path,
     secret_managers_config_path,
@@ -250,9 +250,9 @@ def init_server():
                     headers=ACCEPT_HEADER_2,
                 )
                 if not created:
-                    response[
-                        "msg"
-                    ] = "Failed to create authorization config: {}".format(auth_config)
+                    response["msg"] = "Failed to create authorization config: {}".format(
+                        auth_config
+                    )
                     return False, response
     response["msg"] = "The Authorization config for: {} was completed".format(
         GOCD_BASE_URL
@@ -312,7 +312,11 @@ def setup_config(session, config, url, headers, identifer_variable="id"):
 def setup_configs(session, configs, url, headers, identifer_variable="id"):
     for config in configs:
         success, response = setup_config(
-            session, config, url, headers, identifer_variable=identifer_variable
+            session,
+            config,
+            url,
+            headers,
+            identifer_variable=identifer_variable,
         )
         if not success:
             return False, response
@@ -329,9 +333,7 @@ def remove_config(session, config, url, headers, identifier_variable="id"):
     )
     if exists:
         print("Removing: {}".format(config[identifier_variable]))
-        deleted = delete_type(
-            session, url, config[identifier_variable], headers=headers
-        )
+        deleted = delete_type(session, url, config[identifier_variable], headers=headers)
         if not deleted:
             response["msg"] = "Failed to remove: {}".format(config)
             return False, response
@@ -341,7 +343,11 @@ def remove_config(session, config, url, headers, identifier_variable="id"):
 def remove_configs(session, configs, url, headers, identifier_variable="id"):
     for config in configs:
         success, response = remove_config(
-            session, config, url, headers, identifier_variable=identifier_variable
+            session,
+            config,
+            url,
+            headers,
+            identifier_variable=identifier_variable,
         )
         if not success:
             return False, response
@@ -383,7 +389,10 @@ def setup_config_repositories(session, configs, url, headers):
             created = create_type(
                 session,
                 url,
-                data={"id": repository_config["id"], **repository_config["config"]},
+                data={
+                    "id": repository_config["id"],
+                    **repository_config["config"],
+                },
                 headers=headers,
             )
             if not created:
@@ -413,7 +422,7 @@ def configure_server():
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     pipeline_group_configs = load_config(path=pipeline_group_configs_path)
-    repositories_configs = load_config(path=repositories_path)
+    repositories_configs = load_config(path=config_repositories_path)
     roles_configs = load_config(path=roles_path)
     templates_configs = load_config(path=templates_path)
     # TODO, load and create the authorization config
@@ -424,11 +433,17 @@ def configure_server():
         {"path": artifacts_config_path, "config": artifacts_config},
         {"path": cluster_profiles_path, "config": cluster_profiles_configs},
         {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
-        {"path": pipeline_group_configs_path, "config": pipeline_group_configs},
-        {"path": repositories_path, "config": repositories_configs},
+        {
+            "path": pipeline_group_configs_path,
+            "config": pipeline_group_configs,
+        },
+        {"path": config_repositories_path, "config": repositories_configs},
         {"path": roles_path, "config": roles_configs},
         {"path": templates_path, "config": templates_configs},
-        {"path": secret_managers_config_path, "config": secret_managers_configs},
+        {
+            "path": secret_managers_config_path,
+            "config": secret_managers_configs,
+        },
     ]
     response = {}
 
@@ -456,7 +471,11 @@ def configure_server():
 
         print("Setup Roles")
         success, response = setup_configs(
-            session, roles_configs, ROLE_URL, ACCEPT_HEADER_3, identifer_variable="name"
+            session,
+            roles_configs,
+            ROLE_URL,
+            ACCEPT_HEADER_3,
+            identifer_variable="name",
         )
         if not success:
             return False, response
@@ -481,7 +500,10 @@ def configure_server():
         if secret_managers_configs:
             print("Setup Secret Managers")
             success, response = setup_configs(
-                session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
+                session,
+                secret_managers_configs,
+                SECRET_CONFIG_URL,
+                ACCEPT_HEADER_3,
             )
             if not success:
                 return False, response
@@ -489,7 +511,10 @@ def configure_server():
         if cluster_profiles_configs:
             print("Setup Cluster Profiles")
             success, response = setup_configs(
-                session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
+                session,
+                cluster_profiles_configs,
+                CLUSTER_PROFILES_URL,
+                ACCEPT_HEADER_1,
             )
             if not success:
                 return False, response
@@ -497,7 +522,10 @@ def configure_server():
         if elastic_agent_configs:
             print("Setup Elastic Agent Configs")
             success, response = setup_configs(
-                session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
+                session,
+                elastic_agent_configs,
+                ELASTIC_AGENT_URL,
+                ACCEPT_HEADER_2,
             )
             if not success:
                 return False, response
@@ -545,7 +573,7 @@ def configure_server():
 
 
 def wipe_server():
-    repositories_configs = load_config(path=repositories_path)
+    repositories_configs = load_config(path=config_repositories_path)
     templates_configs = load_config(path=templates_path)
     pipeline_group_configs = load_config(path=pipeline_group_configs_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
@@ -598,7 +626,10 @@ def wipe_server():
         if elastic_agent_configs:
             print("Delete Elastic Agent Configs")
             success, response = remove_configs(
-                session, elastic_agent_configs, ELASTIC_AGENT_URL, ACCEPT_HEADER_2
+                session,
+                elastic_agent_configs,
+                ELASTIC_AGENT_URL,
+                ACCEPT_HEADER_2,
             )
             if not success:
                 return False, response
@@ -606,7 +637,10 @@ def wipe_server():
         if cluster_profiles_configs:
             print("Delete Cluster Profiles")
             success, response = remove_configs(
-                session, cluster_profiles_configs, CLUSTER_PROFILES_URL, ACCEPT_HEADER_1
+                session,
+                cluster_profiles_configs,
+                CLUSTER_PROFILES_URL,
+                ACCEPT_HEADER_1,
             )
             if not success:
                 return False, response
@@ -614,7 +648,10 @@ def wipe_server():
         if secret_managers_configs:
             print("Delete Secret Managers")
             success, response = remove_configs(
-                session, secret_managers_configs, SECRET_CONFIG_URL, ACCEPT_HEADER_3
+                session,
+                secret_managers_configs,
+                SECRET_CONFIG_URL,
+                ACCEPT_HEADER_3,
             )
             if not success:
                 return False, response
