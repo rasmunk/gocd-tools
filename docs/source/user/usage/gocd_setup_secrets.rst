@@ -15,6 +15,7 @@ The ``gocd-tools setup secrets`` command is used as indicated to setup `Secrets 
         delete              Delete the secrets db directory.
 
 ``init``
+~~~~~~~~
 
 This command initializes the directory where the GoCD secrets will be stored.
 This means that it will create the directory path if it doesn't already exist.::
@@ -26,6 +27,7 @@ This means that it will create the directory path if it doesn't already exist.::
     }
 
 ``configure``
+~~~~~~~~~~~~~
 
 This command configures the designated GoCD server with the secrets located in
 the initialized go secret db. Therefore you need to move your secrets into this directory
@@ -41,6 +43,7 @@ to configure the secrets::
     }
 
 ``delete``
+~~~~~~~~~~
 
 This command recursively deletes the intialized secrets db directory.::
 

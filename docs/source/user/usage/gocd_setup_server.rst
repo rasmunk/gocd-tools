@@ -18,8 +18,9 @@ with the infomatation contained in the location configuration directory.::
         wipe                Will wipe all the configuration settings defined in the local config directory on the GoCD server.
 
 ``init``
+~~~~~~~~
 
-This command initializes the designated GoCD server with an Authorization Configuration as indicated by the general help message::
+This command initializes the designated GoCD server with an Authorization Configuration as indicated by the general help message.::
 
     $ gocd-tools setup server init
     Init server: https://gocd-server-url
@@ -32,6 +33,7 @@ This command initializes the designated GoCD server with an Authorization Config
     }
 
 ``configure``
+~~~~~~~~~~~~~
 
 This command configures the designated GoCD server with the configuration.::
 
@@ -67,6 +69,7 @@ This command configures the designated GoCD server with the configuration.::
     }
 
 ``wipe``
+~~~~~~~~
 
 This command wipes the designated GoCD server configurations as defined in the location configuration directory.::
 
