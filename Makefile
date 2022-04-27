@@ -43,8 +43,8 @@ maintainer-clean:
 	@echo 'This command is intended for maintainers to use; it'
 	@echo 'deletes files that may need special tools to rebuild.'
 	$(MAKE) distclean
-	$(MAKE) uninstall-dep
 	$(MAKE) venv-clean
+	$(MAKE) clean
 
 install-dev:
 	$(VENV)/pip install -r requirements-dev.txt
