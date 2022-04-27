@@ -1,6 +1,8 @@
 .. image:: https://readthedocs.org/projects/gocd-tools/badge/?version=latest
     :target: https://gocd-tools.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
+.. image:: https://badge.fury.io/py/gocd-tools.svg
+    :target: https://badge.fury.io/py/gocd-tools
 
 ==========
 gocd-tools
