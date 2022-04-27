@@ -9,7 +9,7 @@ from gocd_tools.defaults import (
     config_repositories_path,
     roles_path,
     templates_path,
-    secret_managers_config_path,
+    secret_configs_path,
     GITHUB_GOCD_AUTH_URL,
     ACCEPT_HEADER_1,
     ACCEPT_HEADER_2,
@@ -426,7 +426,7 @@ def configure_server():
     roles_configs = load_config(path=roles_path)
     templates_configs = load_config(path=templates_path)
     # TODO, load and create the authorization config
-    secret_managers_configs = load_config(path=secret_managers_config_path)
+    secret_configs = load_config(path=secret_configs_path)
 
     configs = [
         {"path": authorization_config_path, "config": authorization_configs},
@@ -441,8 +441,8 @@ def configure_server():
         {"path": roles_path, "config": roles_configs},
         {"path": templates_path, "config": templates_configs},
         {
-            "path": secret_managers_config_path,
-            "config": secret_managers_configs,
+            "path": secret_configs_path,
+            "config": secret_configs,
         },
     ]
     response = {}
@@ -497,11 +497,11 @@ def configure_server():
             if not success:
                 return False, response
 
-        if secret_managers_configs:
-            print("Setup Secret Managers")
+        if secret_configs:
+            print("Setup Secret Configs")
             success, response = setup_configs(
                 session,
-                secret_managers_configs,
+                secret_configs,
                 SECRET_CONFIG_URL,
                 ACCEPT_HEADER_3,
             )
@@ -578,7 +578,7 @@ def wipe_server():
     pipeline_group_configs = load_config(path=pipeline_group_configs_path)
     elastic_agent_configs = load_config(path=elastic_agent_profile_path)
     cluster_profiles_configs = load_config(path=cluster_profiles_path)
-    secret_managers_configs = load_config(path=secret_managers_config_path)
+    secret_configs = load_config(path=secret_configs_path)
     roles_configs = load_config(path=roles_path)
 
     response = {}
@@ -645,11 +645,11 @@ def wipe_server():
             if not success:
                 return False, response
 
-        if secret_managers_configs:
-            print("Delete Secret Managers")
+        if secret_configs:
+            print("Delete Secret Configs")
             success, response = remove_configs(
                 session,
-                secret_managers_configs,
+                secret_configs,
                 SECRET_CONFIG_URL,
                 ACCEPT_HEADER_3,
             )

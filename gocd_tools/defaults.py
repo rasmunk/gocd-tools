@@ -119,7 +119,7 @@ pipeline_group_configs_path = os.path.join(
     default_config_path, "pipeline_group_configs.yml"
 )
 roles_path = os.path.join(default_config_path, "roles.yml")
-secret_managers_config_path = os.path.join(default_config_path, "secret_configs.yml")
+secret_configs_path = os.path.join(default_config_path, "secret_configs.yml")
 templates_path = os.path.join(default_config_path, "templates.yml")
 
 

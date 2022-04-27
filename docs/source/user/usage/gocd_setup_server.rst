@@ -35,7 +35,30 @@ This command initializes the designated GoCD server with an Authorization Config
 
 This command configures the designated GoCD server with the configuration.
 
+    $ gocd-tools setup server configure
+
 
 ``wipe``
 
 This command wipes the designated GoCD server configurations as defined in the location configuration directory.
+
+    $ gocd-tools setup server wipe
+    Authenticate
+    Delete Config Repositories
+    Removing: gocd-tools
+    Delete Template Configs
+    Removing: notebook_image
+    Removing: docker_image
+    Delete Pipeline Config Groups
+    Removing: csharp_package
+    Delete Elastic Agent Configs
+    Removing: python
+    Removing: docker
+    Delete Cluster Profiles
+    Removing: cluster
+    Delete Roles
+    Removing: manager
+    {
+        "msg": "Succesfully finished the cleanup of endpoint: https://gocd-server-url",
+        "status": "success"
+    }

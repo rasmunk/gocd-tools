@@ -20,6 +20,6 @@ is assigned to the ``GOCD_AUTH_TOKEN`` environment variable::
 
 Secondly, the ``gocd-tools`` also requires that the ``GOCD_BASE_URL`` variable be set to the URL of the GoCD server::
 
-    export GOCD_BASE_URL=https://gocd_server_url
+    export GOCD_BASE_URL="https://gocd_server_url"
 
 With these two prerequisites in place, the ``gocd-tools`` is now ready to be used to both be installed and used.
