@@ -26,6 +26,35 @@ An example configuration of this could be::
         purge_upto_disk_space: 20
 
 
+.. _Authorization Configuration: https://api.gocd.org/current/#authorization-configuration
+.. _Authorization Configuration Object: https://api.gocd.org/current/#the-authorization-configuration-object
+.. _Authorization Configuration File:
+
+``authorization_configuration.yml``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This file contains the `Authorization Configuration`_ configuration.
+The structure of this file is expected to abide by the format defined the GoCD API for an `Authorization Configuration Object`_.
+An example configuration of this could be::
+
+  - id: "github"
+    plugin_id: "cd.go.authorization.github"
+    allow_only_known_users_to_login: true
+    properties:
+      - key: "ClientId"
+        value: "CLIENT_ID"
+      - key: "ClientSecret"
+        value: "CLIENT_SECRET"
+      - key: "PersonalAccessToken"
+        value: "PERSONAL_ACCESS_TOKEN"
+      - key: "GitHubEnterpriseUrl"
+        value: ""
+      - key: "AllowedOrganizations"
+        value: "ucphhpc"
+      - key: "AuthenticateWith"
+        value: "GitHub"
+
+
 .. _Cluster Profiles: https://api.gocd.org/current/#cluster-profiles
 .. _Cluster Profile Object: https://api.gocd.org/current/#the-cluster-profile-object
 .. _Cluster Profiles File:

@@ -15,10 +15,7 @@ prerequisites prepared. Furthermore, additional information about the tool can b
 
 For information about the level of GoCD server management the ``gocd-tools`` currently supports, see the :doc:`/user/support/index`.
 
-To getting help with how the tool CLI can be used, see the :doc:`/user/usage/index` section.
-
-Finally, the documentation for the backend Python implementation can be seen in the :doc:`/python/index` section.
-
+Finally, help about how the Command Line Interface can be used can be found in the :doc:`/user/usage/index` section.
 
 .. toctree::
    :maxdepth: 2
@@ -28,9 +25,3 @@ Finally, the documentation for the backend Python implementation can be seen in 
    user/configuration/index
    user/usage/index
    user/support/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Python Documentation
-
-   python/index
