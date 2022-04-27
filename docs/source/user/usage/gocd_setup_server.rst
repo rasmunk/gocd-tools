@@ -33,7 +33,7 @@ This command initializes the designated GoCD server with an Authorization Config
 
 ``configure``
 
-This command configures the designated GoCD server with the configuration::
+This command configures the designated GoCD server with the configuration.::
 
     $ gocd-tools setup server configure
     Authenticate
@@ -68,7 +68,7 @@ This command configures the designated GoCD server with the configuration::
 
 ``wipe``
 
-This command wipes the designated GoCD server configurations as defined in the location configuration directory::
+This command wipes the designated GoCD server configurations as defined in the location configuration directory.::
 
     $ gocd-tools setup server wipe
     Authenticate
