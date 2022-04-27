@@ -29,7 +29,8 @@ This means that it will create the directory path if it doesn't already exist.::
 
 This command configures the designated GoCD server with the secrets located in
 the initialized go secret db. Therefore you need to move your secrets into this directory
-before the command is executed.::
+before the command is executed. The tool specifically requires the `Secret Configs`_ configuration
+to configure the secrets::
 
     $ gocd-tools secrets configure
     Assigned key: username to secret db: /gosecret/github.json, with output:
