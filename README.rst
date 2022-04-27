@@ -25,5 +25,5 @@ The easiest way to accomplish this is to use the PyPI installer::
 How-to
 ------
 
-For additional information about how to use the tool and how it should be
-configured and etc. Please see the `Documentation <https://gocd-tools.readthedocs.io/en/latest/>`_.
+For additional information about how to use the tool, and how it should be
+configured, etc. Please see the `Documentation <https://gocd-tools.readthedocs.io/en/latest/>`_.
