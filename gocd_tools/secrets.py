@@ -44,6 +44,27 @@ def del_secrets_dir():
     return True, response
 
 
+def add_secret(add_command, key, value):
+    response = {}
+    add_secret_cmd = add_command + ["-n", key, "-v", value]
+    execute_kwargs = {"commands": [add_secret_cmd], "capture": True}
+    results = process(execute_kwargs=execute_kwargs)
+    for result in results:
+        json_result = format_output_json(result)
+
+        if (
+            "status" in json_result["error"]
+            and json_result["error"]["status"] == "failed"
+        ):
+            if "msg" in json_result["error"]:
+                response["msg"] = json_result["error"]["msg"]
+                return False, response
+            else:
+                response["msg"] = json_result
+                return False, response
+    return True, response
+
+
 def configure_secrets():
     """This function is required to be run on the target
     server because it is using the file secret plugin"""
@@ -71,7 +92,7 @@ def configure_secrets():
     base_plugin_cmd = ["java", "-jar", file_secret_plugin_path]
     create_db_cmd = base_plugin_cmd + ["init", "-f"]
 
-    # Add the secret key and values to the secret dbs
+    # Create the secret dbs and add the secret keys and values to it
     base_add_secret_cmd = base_plugin_cmd + ["add", "-f"]
     for secret_db_key, secret_db in secret_db.items():
         # Create the secret db if it doesn't exist
@@ -97,31 +118,22 @@ def configure_secrets():
                     )
                 )
 
-        # Assign the 'data' key in the secret_db to the secret file
+        # Assign the 'data' key and it's content to the secret_db's secret file
         db_add_cmd = base_add_secret_cmd + [secret_db["path"]]
         for key, value in secret_db["data"].items():
-            add_secret_cmd = db_add_cmd + ["-n", key, "-v", value]
-            execute_kwargs = {"commands": [add_secret_cmd], "capture": True}
-            results = process(execute_kwargs=execute_kwargs)
-            for result in results:
-                json_result = format_output_json(result)
-
-                if (
-                    "status" in json_result["error"]
-                    and json_result["error"]["status"] == "failed"
-                ):
-                    if "msg" in json_result["error"]:
-                        response["msg"] = json_result["error"]["msg"]
+            # The value added to the secret_db
+            # must be a value of type str, bytes, or pathlike
+            if isinstance(value, dict):
+                for sub_key, sub_value in value.items():
+                    added, response = add_secret(db_add_cmd, sub_key, sub_value)
+                    if not added:
                         return False, response
-                    else:
-                        response["msg"] = json_result
-                        return False, response
+            else:
+                added, response = add_secret(db_add_cmd, key, value)
+                if not added:
+                    return False, response
 
-                print(
-                    "Assigned key: {} to secret db: {}, with output: {}".format(
-                        key, secret_db["path"], json_result["output"]
-                    )
-                )
+            print("Assigned key: {} to secret db: {}".format(key, secret_db["path"]))
 
     response["msg"] = "The secrets db at: {} was used to configure the server".format(
         secret_db_path

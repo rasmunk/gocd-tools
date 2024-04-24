@@ -250,9 +250,9 @@ def init_server():
                     headers=ACCEPT_HEADER_2,
                 )
                 if not created:
-                    response[
-                        "msg"
-                    ] = "Failed to create authorization config: {}".format(auth_config)
+                    response["msg"] = (
+                        "Failed to create authorization config: {}".format(auth_config)
+                    )
                     return False, response
     response["msg"] = "The Authorization config for: {} was completed".format(
         GOCD_BASE_URL
@@ -370,7 +370,7 @@ def setup_config_repositories(session, configs, url, headers):
             if is_auth_repo(repository_config):
                 auth_data = repo_auth_data(repository_config)
                 repo_secret_manager = get_repo_secret_manager(repository_config)
-                secret = get_repo_secret(auth_data)
+                _ = get_repo_secret(auth_data)
 
                 secret_manager = get_secret_manager(session, repo_secret_manager)
                 if not secret_manager:
