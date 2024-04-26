@@ -1,11 +1,3 @@
-environments:
-  gocd_tools:
-    environments:
-      GIT_USER: "{{SECRET:[github][username]}}"
-      PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
-      PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
-    pipelines:
-      - gocd-tools
 pipelines:
   gocd-tools:
     group: pypi_package
@@ -25,6 +17,8 @@ pipelines:
         branch: main
         username: ${GIT_USER}
         password: "{{SECRET:[github][access_token]}}"
+        PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
+        PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
         destination: publish-python-scripts
     parameters:
       ARGS: ''
