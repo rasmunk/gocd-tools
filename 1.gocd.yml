@@ -17,12 +17,12 @@ pipelines:
         branch: main
         username: ${GIT_USER}
         password: "{{SECRET:[github][access_token]}}"
-        PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
-        PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
         destination: publish-python-scripts
     parameters:
       ARGS: ''
       SRC_DIRECTORY: gocd-tools
       TEST_DIRECTORY: gocd-tools
       PUSH_DIRECTORY: publish-python-scripts
+      PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
+      PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
     template: pypi_package
