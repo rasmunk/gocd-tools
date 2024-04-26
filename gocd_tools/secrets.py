@@ -123,16 +123,9 @@ def configure_secrets():
         for key, value in secret_db["data"].items():
             # The value added to the secret_db
             # must be a value of type str, bytes, or pathlike
-            if isinstance(value, dict):
-                for sub_key, sub_value in value.items():
-                    added, response = add_secret(db_add_cmd, sub_key, sub_value)
-                    if not added:
-                        return False, response
-            else:
-                added, response = add_secret(db_add_cmd, key, value)
-                if not added:
-                    return False, response
-
+            added, response = add_secret(db_add_cmd, key, value)
+            if not added:
+                return False, response
             print("Assigned key: {} to secret db: {}".format(key, secret_db["path"]))
 
     response["msg"] = "The secrets db at: {} was used to configure the server".format(
