@@ -2,8 +2,8 @@ environments:
   gocd_tools:
     environments:
       GIT_USER: "{{SECRET:[github][username]}}"
-      TWINE_USERNAME: "{{SECRET:[gocd_tools][username]}}"
-      TWINE_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
+      PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
+      PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
     pipelines:
       - gocd-tools
 pipelines:
