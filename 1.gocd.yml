@@ -3,6 +3,8 @@ environments:
     environment_variables:
       PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
       PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
+    pipelines:
+      - gocd-tools
 pipelines:
   gocd-tools:
     group: pypi_package
