@@ -1,3 +1,8 @@
+environments:
+  gocd_tools:
+    environment_variables:
+      PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
+      PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
 pipelines:
   gocd-tools:
     group: pypi_package
@@ -23,6 +28,4 @@ pipelines:
       SRC_DIRECTORY: gocd-tools
       TEST_DIRECTORY: gocd-tools
       PUSH_DIRECTORY: publish-python-scripts
-      PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
-      PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
     template: pypi_package
