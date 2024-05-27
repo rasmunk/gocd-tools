@@ -6,7 +6,7 @@ TAG=edge
 ARGS=
 
 .PHONY: all init dockerbuild dockerclean dockerpush clean dist distclean maintainer-clean
-.PHONY: install uninstall installcheck check
+.PHONY: install uninstall installtest test
 
 all: venv install-dep init dockerbuild
 
@@ -67,14 +67,14 @@ uninstall:
 	$(MAKE) uninstall-dev
 	$(VENV)/pip uninstall -y -r $(PACKAGE_NAME)
 
-uninstallcheck:
+uninstalltest:
 	$(VENV)/pip uninstall -y -r tests/requirements.txt
 
-installcheck:
+installtest:
 	$(VENV)/pip install -r tests/requirements.txt
 
 # The tests requires access to the docker socket
-check:
+test:
 	. $(VENV)/activate; python3 setup.py check -rms
 	. $(VENV)/activate; pytest -s -v tests/
 
