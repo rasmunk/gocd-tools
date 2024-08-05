@@ -5,11 +5,10 @@ IMAGE=$(PACKAGE_NAME)
 TAG=edge
 ARGS=
 
-.PHONY: all init dockerbuild dockerclean dockerpush clean dist distclean maintainer-clean
-.PHONY: install uninstall installtest test
-
+.PHONY: all
 all: venv install-dep init dockerbuild
 
+.PHONY: init
 init:
 ifeq ($(shell test -e defaults.env && echo yes), yes)
 ifneq ($(shell test -e .env && echo yes), yes)
@@ -17,28 +16,34 @@ ifneq ($(shell test -e .env && echo yes), yes)
 endif
 endif
 
+.PHONY: dockerbuild
 dockerbuild:
 	docker build -t $(OWNER)/$(IMAGE):$(TAG) $(ARGS) .
 
+.PHONY: dockerclean
 dockerclean:
 	docker rmi -f $(OWNER)/$(IMAGE):$(TAG)
 
+.PHONY: dockerpush
 dockerpush:
 	docker push $(OWNER)/$(IMAGE):$(TAG)
 
-clean:
-	$(MAKE) dockerclean
+.PHONY: clean
+clean: distclean dockerclean
 	rm -fr .env
 	rm -fr .pytest_cache
 	rm -fr gocd_tools/__pycache__
 	rm -fr tests/__pycache__
 
-dist:
+.PHONY: dist
+dist: venv
 	$(VENV)/python setup.py sdist bdist_wheel
 
+.PHONY: distclean
 distclean:
 	rm -fr dist build $(PACKAGE_NAME).egg-info $(PACKAGE_NAME_FORMATTED).egg-info
 
+.PHONY: maintainer-clean
 maintainer-clean:
 	@echo 'This command is intended for maintainers to use; it'
 	@echo 'deletes files that may need special tools to rebuild.'
@@ -46,35 +51,41 @@ maintainer-clean:
 	$(MAKE) venv-clean
 	$(MAKE) clean
 
-install-dev:
+.PHONY: install-dev
+install-dev: venv
 	$(VENV)/pip install -r requirements-dev.txt
 
-uninstall-dev:
+.PHONY: uninstall-dev
+uninstall-dev: venv
 	$(VENV)/pip uninstall -r requirements-dev.txt
 
-install-dep:
+.PHONY: install-dep
+install-dep: venv
 	$(VENV)/pip install -r requirements.txt
 
-uninstall-dep:
+.PHONY: uninstall-dep
+uninstall-dep: venv
 	$(VENV)/pip uninstall -y -r requirements.txt
 
-install:
-	$(MAKE) install-dep
+.PHONY: install
+install: venv install-dev
 	$(VENV)/pip install .
 
-uninstall:
-	$(MAKE) uninstall-dep
-	$(MAKE) uninstall-dev
+.PHONY: uninstall
+uninstall: venv
 	$(VENV)/pip uninstall -y -r $(PACKAGE_NAME)
 
-uninstalltest:
+.PHONY: uninstalltest
+uninstalltest: venv
 	$(VENV)/pip uninstall -y -r tests/requirements.txt
 
-installtest:
+.PHONY: installtest
+installtest: venv
 	$(VENV)/pip install -r tests/requirements.txt
 
+.PHONY: test
 # The tests requires access to the docker socket
-test:
+test: venv installtest
 	. $(VENV)/activate; python3 setup.py check -rms
 	. $(VENV)/activate; pytest -s -v tests/
 
