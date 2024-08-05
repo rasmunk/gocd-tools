@@ -1,14 +1,17 @@
 environments:
   gocd_tools:
     environment_variables:
+      GIT_USER: "{{SECRET:[github][username]}}"
       PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
       PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
     pipelines:
       - gocd-tools
 pipelines:
   gocd-tools:
-    group: pypi_package
-    locking: off
+    display_order: -1
+    group: bare_metal_pypi_package
+    label_template: ${COUNT}
+    lock_behaviour: none
     timer:
       # Run on the 1st at 00:00 of every month
       spec: "0 0 0 1 * ? *"
@@ -30,4 +33,4 @@ pipelines:
       SRC_DIRECTORY: gocd-tools
       TEST_DIRECTORY: gocd-tools
       PUSH_DIRECTORY: publish-python-scripts
-    template: pypi_package
+    template: bare_metal_pypi_package
