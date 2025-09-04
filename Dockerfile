@@ -19,7 +19,6 @@ RUN npm install -g configurable-http-proxy
 
 ADD $PACKAGE_NAME /app/$PACKAGE_NAME
 ADD setup.py /app/setup.py
-ADD version.py /app/version.py
 ADD requirements.txt /app/requirements.txt
 ADD requirements-dev.txt /app/requirements-dev.txt
 ADD tests/requirements.txt /app/tests/requirements.txt

@@ -14,9 +14,11 @@ def read_req(name):
     return [req.strip() for req in read(path).splitlines() if req.strip()]
 
 
+# Get the current package version.
 version_ns = {}
-with open(os.path.join(cur_dir, "version.py")) as f:
-    exec(f.read(), {}, version_ns)
+version_path = os.path.join(cur_dir, "gocd_tools", "_version.py")
+version_content = read(version_path)
+exec(version_content, {}, version_ns)
 
 
 long_description = open("README.rst").read()
@@ -38,7 +40,6 @@ setup(
         "Intended Audience :: Developers",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
