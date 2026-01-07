@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=ubuntu:focal-20210416
+ARG BASE_IMAGE=debian:12
 FROM $BASE_IMAGE AS builder
 
 ARG PACKAGE_NAME=gocd_tools
@@ -26,6 +26,6 @@ ADD tests/requirements.txt /app/tests/requirements.txt
 WORKDIR /app
 
 RUN touch README.rst \
-    && pip3 install .
+    && pip3 install . --break-system-packages
 
 ENTRYPOINT ["gocd-tools"]
