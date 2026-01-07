@@ -420,33 +420,35 @@ def setup_config_repositories(session, configs, url, headers):
 
 def configure_server():
     authorization_configs = load_config(path=authorization_config_path)
-    artifacts_config = load_config(path=artifacts_config_path)
-    cluster_profiles_configs = load_config(path=cluster_profiles_path)
-    elastic_agent_configs = load_config(path=elastic_agent_profile_path)
-    pipeline_group_configs = load_config(path=pipeline_group_configs_path)
-    repositories_configs = load_config(path=config_repositories_path)
     roles_configs = load_config(path=roles_path)
-    templates_configs = load_config(path=templates_path)
     # TODO, load and create the authorization config
-    secret_configs = load_config(path=secret_configs_path)
-
     configs = [
         {"path": authorization_config_path, "config": authorization_configs},
-        {"path": artifacts_config_path, "config": artifacts_config},
-        {"path": cluster_profiles_path, "config": cluster_profiles_configs},
-        {"path": elastic_agent_profile_path, "config": elastic_agent_configs},
-        {
-            "path": pipeline_group_configs_path,
-            "config": pipeline_group_configs,
-        },
-        {"path": config_repositories_path, "config": repositories_configs},
         {"path": roles_path, "config": roles_configs},
-        {"path": templates_path, "config": templates_configs},
-        {
-            "path": secret_configs_path,
-            "config": secret_configs,
-        },
     ]
+
+    artifacts_config = load_config(path=artifacts_config_path)
+    cluster_profiles_configs = load_config(path=cluster_profiles_path)
+    secret_configs = load_config(path=secret_configs_path)
+    elastic_agent_configs = load_config(path=elastic_agent_profile_path)
+    pipeline_group_configs = load_config(path=pipeline_group_configs_path)
+    templates_configs = load_config(path=templates_path)
+    repositories_configs = load_config(path=config_repositories_path)
+
+    optional_configs = [
+        (artifacts_config_path, artifacts_config),
+        (cluster_profiles_path, cluster_profiles_configs),
+        (secret_configs_path, secret_configs),
+        (elastic_agent_profile_path, elastic_agent_configs),
+        (pipeline_group_configs_path, pipeline_group_configs),
+        (templates_path, templates_configs),
+        (config_repositories_path, repositories_configs),
+    ]
+
+    for optional_config in optional_configs:
+        if optional_config[1]:
+            configs.append({"path": optional_config[0], "config": optional_config[1]})
+
     response = {}
 
     for config in configs:
