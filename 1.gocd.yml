@@ -9,7 +9,7 @@ environments:
 pipelines:
   gocd-tools:
     display_order: -1
-    group: bare_metal_pypi_package
+    group: pypi_package
     label_template: ${COUNT}
     lock_behaviour: none
     timer:
@@ -33,4 +33,4 @@ pipelines:
       SRC_DIRECTORY: gocd-tools
       TEST_DIRECTORY: gocd-tools
       PUSH_DIRECTORY: publish-python-scripts
-    template: bare_metal_pypi_package
+    template: pypi_package
