@@ -29,8 +29,10 @@ pipelines:
         password: "{{SECRET:[github][access_token]}}"
         destination: publish-python-scripts
     parameters:
-      ARGS: ''
       SRC_DIRECTORY: gocd-tools
+      BUILD_ARGS: ''
       TEST_DIRECTORY: gocd-tools
+      TEST_MAKE_TARGET: test
+      TEST_ARGS: ''
       PUSH_DIRECTORY: publish-python-scripts
     template: pypi_package
