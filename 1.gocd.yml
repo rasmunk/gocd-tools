@@ -30,8 +30,10 @@ pipelines:
         destination: publish-python-scripts
     parameters:
       SRC_DIRECTORY: gocd-tools
-      BUILD_MAKE_ARGS: install
+      BUILD_MAKE_TARGET: all
+      BUILD_MAKE_ARGS: ''
       TEST_DIRECTORY: gocd-tools
-      TEST_MAKE_ARGS: test
+      TEST_MAKE_TARGET: test
+      TEST_MAKE_ARGS: ''
       PUSH_DIRECTORY: publish-python-scripts
     template: pypi_package
