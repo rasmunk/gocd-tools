@@ -1,6 +1,7 @@
 environments:
   gocd_tools:
     environment_variables:
+      GIT_TERMINAL_PROMPT: 0
       GIT_USER: "{{SECRET:[github][username]}}"
       PYPI_USERNAME: "{{SECRET:[gocd_tools][username]}}"
       PYPI_PASSWORD: "{{SECRET:[gocd_tools][password]}}"
